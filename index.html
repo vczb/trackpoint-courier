@@ -201,14 +201,22 @@
         border: 2px solid #ffffffa8;
         border-radius: 50%;
       }
-      .target.route {
+      .target.route,
+      .target.moving {
         background: #397f9f;
+      }
+      .target.moving {
+        box-shadow: 0 0 0 7px #397f9f35;
+      }
+      .target.moving:hover,
+      .target.moving:focus-visible {
+        box-shadow: 0 0 0 9px #397f9f55;
       }
 
       .dropzone {
         position: absolute;
-        right: 22px;
-        bottom: 22px;
+        left: 22px;
+        top: 22px;
         width: 112px;
         height: 82px;
         border: 2px dashed var(--blue);
@@ -219,6 +227,11 @@
         font-size: 11px;
         text-align: center;
         pointer-events: none;
+        transition:
+          left 480ms cubic-bezier(0.2, 0.8, 0.2, 1),
+          top 480ms cubic-bezier(0.2, 0.8, 0.2, 1),
+          width 220ms ease,
+          height 220ms ease;
       }
       .package {
         position: absolute;
@@ -505,6 +518,10 @@
                 <span class="mode-icon" aria-hidden="true">04</span>
                 <span>Package delivery<small>Drag and drop · repeat deliveries</small></span>
               </button>
+              <button class="mode-btn" data-mode="moving" type="button" aria-pressed="false">
+                <span class="mode-icon" aria-hidden="true">05</span>
+                <span>Moving targets<small>Follow and click as they move</small></span>
+              </button>
             </div>
           </section>
 
@@ -515,7 +532,7 @@
               pushing too hard.
             </p>
             <div class="progress" role="progressbar" aria-label="Progress to next stage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progress"></i></div>
-            <div class="sub progress-text" id="progressText">Targets shrink at each milestone. From stage 4, they begin to move. Keep going as long as you like.</div>
+            <div class="sub progress-text" id="progressText">Moving Targets starts shifting right away, and speeds up with each stage. Other targets move from stage 4; delivery zones shift from stage 2.</div>
           </section>
 
           <section class="side-card">
@@ -564,10 +581,17 @@
             minSize: 20,
             tip: "<strong>Plan your next move.</strong> Look at the next checkpoint before moving.",
           },
+          moving: {
+            title: "Moving targets",
+            description: "Click the target as it glides around the arena.",
+            size: 48,
+            minSize: 16,
+            tip: "<strong>Lead the target.</strong> Follow its path and click when it crosses your line.",
+          },
           drag: {
             title: "Package delivery",
-            description: "Drag each package into the delivery zone. Use arrow keys to move it, then press Enter to deliver.",
-            tip: "<strong>Coordinate both hands.</strong> Hold the mouse button while moving the TrackPoint, or use the keyboard controls.",
+            description: "Drag packages into the delivery zone. It starts moving as your run progresses.",
+            tip: "<strong>Track the moving zone.</strong> Hold the mouse button while moving the TrackPoint, or use the keyboard controls.",
           },
         };
 
@@ -702,8 +726,10 @@
           $("tip").innerHTML = config.tip;
           $("hint").textContent =
             mode === "drag"
-              ? "Drag the package · Arrow keys also work"
-              : "Use the TrackPoint to move · Click the target";
+              ? "Drag the package · Zone shifts from stage 2"
+              : mode === "moving"
+                ? "Follow the moving target · Click to score"
+                : "Use the TrackPoint to move · Click the target";
           clearArena();
 
           if (running) {
@@ -730,10 +756,13 @@
         }
 
         function scheduleTargetShift(target, size) {
-          if (!running || getStage() < 4 || mode === "drag") return;
+          const movingMode = mode === "moving";
+          if (!running || mode === "drag" || (!movingMode && getStage() < 4)) return;
 
           const stage = getStage();
-          const delay = Math.max(1600, 5600 - (stage - 4) * 350);
+          const delay = movingMode
+            ? Math.max(900, 2600 - (stage - 1) * 180)
+            : Math.max(1600, 5600 - (stage - 4) * 350);
           targetShiftTimer = window.setTimeout(() => {
             targetShiftTimer = null;
             if (!running || !target.isConnected) return;
@@ -742,6 +771,34 @@
             target.style.left = position.x + "px";
             target.style.top = position.y + "px";
             scheduleTargetShift(target, size);
+          }, delay);
+        }
+
+        function scheduleDeliveryZoneShift(zone) {
+          if (
+            !running ||
+            mode !== "drag" ||
+            getStage() < 2 ||
+            targetShiftTimer !== null
+          ) {
+            return;
+          }
+
+          const stage = getStage();
+          const delay = Math.max(1500, 6500 - (stage - 2) * 450);
+          targetShiftTimer = window.setTimeout(() => {
+            targetShiftTimer = null;
+            if (!running || mode !== "drag" || !zone.isConnected) return;
+
+            const rect = arena.getBoundingClientRect();
+            const size = zone.offsetWidth;
+            const padding = 14;
+            const minTop = 60;
+            const maxLeft = Math.max(padding, rect.width - size - padding);
+            const maxTop = Math.max(minTop, rect.height - size - padding);
+            zone.style.left = random(padding, maxLeft) + "px";
+            zone.style.top = random(minTop, maxTop) + "px";
+            scheduleDeliveryZoneShift(zone);
           }, delay);
         }
 
@@ -759,11 +816,16 @@
           target.style.height = size + "px";
           target.style.left = position.x + "px";
           target.style.top = position.y + "px";
-          target.setAttribute("aria-label", "Target " + (hits + 1));
+          target.setAttribute(
+            "aria-label",
+            (mode === "moving" ? "Moving target " : "Target ") + (hits + 1),
+          );
 
           if (mode === "route") {
             target.classList.add("route");
             target.textContent = hits + 1;
+          } else if (mode === "moving") {
+            target.classList.add("moving");
           }
 
           target.addEventListener("click", (event) => {
@@ -806,8 +868,10 @@
           $("start").textContent = "Pause run";
           $("feedback").textContent =
             mode === "drag"
-              ? "Drag the package into the delivery zone."
-              : "Click the targets using your TrackPoint.";
+              ? "Drag the package into the delivery zone. It starts shifting at stage 2."
+              : mode === "moving"
+                ? "Click the moving target before it changes position."
+                : "Click the targets using your TrackPoint.";
 
           updateStats();
           startTimer();
@@ -840,6 +904,7 @@
 
           if (mode === "drag") {
             if (!arena.querySelector(".package")) setupDrag();
+            else scheduleDeliveryZoneShift(arena.querySelector(".dropzone"));
           } else {
             const target = arena.querySelector(".target");
             if (target) scheduleTargetShift(target, target.offsetWidth);
@@ -856,6 +921,8 @@
           const zoneSize = Math.max(68, 112 - (getStage() - 1) * 3);
           zone.style.width = zoneSize + "px";
           zone.style.height = zoneSize + "px";
+          zone.style.left = Math.max(14, arena.clientWidth - zoneSize - 22) + "px";
+          zone.style.top = Math.max(60, arena.clientHeight - zoneSize - 22) + "px";
           arena.appendChild(zone);
 
           const packageEl = document.createElement("button");
@@ -892,6 +959,7 @@
               zone.style.height = nextZoneSize + "px";
               packageEl.style.left = "35px";
               packageEl.style.top = arena.clientHeight / 2 - 21 + "px";
+              scheduleDeliveryZoneShift(zone);
             } else {
               registerMiss("Not quite. Move the package fully into the delivery zone.");
             }
@@ -969,6 +1037,8 @@
             event.preventDefault();
             deliverPackage();
           });
+
+          scheduleDeliveryZoneShift(zone);
         }
 
         $("start").addEventListener("click", () => {
