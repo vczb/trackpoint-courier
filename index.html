@@ -201,8 +201,16 @@
         border: 2px solid #ffffffa8;
         border-radius: 50%;
       }
-      .target.route {
+      .target.route,
+      .target.moving {
         background: #397f9f;
+      }
+      .target.moving {
+        box-shadow: 0 0 0 7px #397f9f35;
+      }
+      .target.moving:hover,
+      .target.moving:focus-visible {
+        box-shadow: 0 0 0 9px #397f9f55;
       }
 
       .dropzone {
@@ -510,6 +518,10 @@
                 <span class="mode-icon" aria-hidden="true">04</span>
                 <span>Package delivery<small>Drag and drop · repeat deliveries</small></span>
               </button>
+              <button class="mode-btn" data-mode="moving" type="button" aria-pressed="false">
+                <span class="mode-icon" aria-hidden="true">05</span>
+                <span>Moving targets<small>Follow and click as they move</small></span>
+              </button>
             </div>
           </section>
 
@@ -520,7 +532,7 @@
               pushing too hard.
             </p>
             <div class="progress" role="progressbar" aria-label="Progress to next stage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progress"></i></div>
-            <div class="sub progress-text" id="progressText">Targets shrink each milestone; aim targets move from stage 4. Delivery zones start shifting at stage 2.</div>
+            <div class="sub progress-text" id="progressText">Moving Targets starts shifting right away, and speeds up with each stage. Other targets move from stage 4; delivery zones shift from stage 2.</div>
           </section>
 
           <section class="side-card">
@@ -568,6 +580,13 @@
             size: 48,
             minSize: 20,
             tip: "<strong>Plan your next move.</strong> Look at the next checkpoint before moving.",
+          },
+          moving: {
+            title: "Moving targets",
+            description: "Click the target as it glides around the arena.",
+            size: 48,
+            minSize: 16,
+            tip: "<strong>Lead the target.</strong> Follow its path and click when it crosses your line.",
           },
           drag: {
             title: "Package delivery",
@@ -708,7 +727,9 @@
           $("hint").textContent =
             mode === "drag"
               ? "Drag the package · Zone shifts from stage 2"
-              : "Use the TrackPoint to move · Click the target";
+              : mode === "moving"
+                ? "Follow the moving target · Click to score"
+                : "Use the TrackPoint to move · Click the target";
           clearArena();
 
           if (running) {
@@ -735,10 +756,13 @@
         }
 
         function scheduleTargetShift(target, size) {
-          if (!running || getStage() < 4 || mode === "drag") return;
+          const movingMode = mode === "moving";
+          if (!running || mode === "drag" || (!movingMode && getStage() < 4)) return;
 
           const stage = getStage();
-          const delay = Math.max(1600, 5600 - (stage - 4) * 350);
+          const delay = movingMode
+            ? Math.max(900, 2600 - (stage - 1) * 180)
+            : Math.max(1600, 5600 - (stage - 4) * 350);
           targetShiftTimer = window.setTimeout(() => {
             targetShiftTimer = null;
             if (!running || !target.isConnected) return;
@@ -792,11 +816,16 @@
           target.style.height = size + "px";
           target.style.left = position.x + "px";
           target.style.top = position.y + "px";
-          target.setAttribute("aria-label", "Target " + (hits + 1));
+          target.setAttribute(
+            "aria-label",
+            (mode === "moving" ? "Moving target " : "Target ") + (hits + 1),
+          );
 
           if (mode === "route") {
             target.classList.add("route");
             target.textContent = hits + 1;
+          } else if (mode === "moving") {
+            target.classList.add("moving");
           }
 
           target.addEventListener("click", (event) => {
@@ -840,7 +869,9 @@
           $("feedback").textContent =
             mode === "drag"
               ? "Drag the package into the delivery zone. It starts shifting at stage 2."
-              : "Click the targets using your TrackPoint.";
+              : mode === "moving"
+                ? "Click the moving target before it changes position."
+                : "Click the targets using your TrackPoint.";
 
           updateStats();
           startTimer();
