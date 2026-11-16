@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#101820" />
-    <title>TrackPoint Courier — precision training</title>
+    <title>TrackPoint Courier — Precision Training</title>
     <style>
       :root {
         --bg: #101820;
@@ -18,21 +18,23 @@
         --yellow: #f2c66d;
         --blue: #8bc8ee;
       }
+
       * {
         box-sizing: border-box;
       }
+
       body {
         margin: 0;
-        background:
-          radial-gradient(ellipse at 50% -20%, #263d4a 0, transparent 55%),
-          var(--bg);
+        background: var(--bg);
         color: var(--text);
         font:
           15px/1.5 system-ui,
           -apple-system,
-          Segoe UI,
+          BlinkMacSystemFont,
+          "Segoe UI",
           sans-serif;
       }
+
       button {
         font: inherit;
         cursor: pointer;
@@ -41,6 +43,7 @@
         outline: 3px solid var(--yellow);
         outline-offset: 3px;
       }
+
       .shell {
         max-width: 1100px;
         margin: auto;
@@ -50,7 +53,6 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 20px;
         margin-bottom: 22px;
       }
       .brand {
@@ -67,12 +69,10 @@
         place-items: center;
         font-size: 23px;
         font-weight: 800;
-        color: white;
       }
       h1 {
         font-size: clamp(21px, 3vw, 29px);
         margin: 0;
-        letter-spacing: -0.7px;
       }
       .sub {
         color: var(--muted);
@@ -84,17 +84,16 @@
         padding: 7px 12px;
         color: var(--muted);
         font-size: 12px;
-        white-space: nowrap;
       }
+
       .layout {
         display: grid;
         grid-template-columns: minmax(0, 1fr) 270px;
         gap: 18px;
-        align-items: start;
       }
       .game-card,
       .side-card {
-        background: linear-gradient(145deg, var(--panel), #14212a);
+        background: var(--panel);
         border: 1px solid var(--line);
         border-radius: 18px;
         overflow: hidden;
@@ -103,7 +102,6 @@
         padding: 18px 20px 14px;
         display: flex;
         justify-content: space-between;
-        align-items: center;
         gap: 12px;
       }
       .mode-title {
@@ -113,15 +111,13 @@
       .mode-desc {
         font-size: 13px;
         color: var(--muted);
-        margin-top: 2px;
       }
       .level {
         color: var(--yellow);
         font-size: 12px;
         font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
       }
+
       .stats {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -132,19 +128,17 @@
         background: var(--panel2);
         border-radius: 10px;
         padding: 9px 11px;
-        min-width: 0;
       }
       .stat-label {
         color: var(--muted);
         font-size: 10px;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
       }
       .stat-value {
         font-size: 20px;
         font-weight: 750;
-        font-variant-numeric: tabular-nums;
       }
+
       .arena-wrap {
         padding: 0 20px 18px;
       }
@@ -159,82 +153,55 @@
           linear-gradient(#ffffff08 1px, transparent 1px),
           linear-gradient(90deg, #ffffff08 1px, transparent 1px);
         background-size: 32px 32px;
-        touch-action: pan-y;
         user-select: none;
-      }
-      .arena:after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        border-radius: 14px;
-        box-shadow: inset 0 0 60px #07101780;
       }
       .hint {
         position: absolute;
-        z-index: 1;
         top: 15px;
         left: 16px;
         color: #91a8b2;
         font-size: 12px;
         pointer-events: none;
       }
+
       .target {
         position: absolute;
         z-index: 2;
         border: 0;
         border-radius: 50%;
         background: var(--red);
-        box-shadow:
-          0 0 0 7px #e34c4c25,
-          0 5px 16px #0007;
+        box-shadow: 0 0 0 7px #e34c4c25;
         transform: translate(-50%, -50%);
         display: grid;
         place-items: center;
         color: white;
         font-weight: 800;
-        transition:
-          width 0.12s,
-          height 0.12s,
-          background 0.12s;
       }
-      .target:after {
+      .target::after {
         content: "";
         position: absolute;
         inset: 23%;
         border: 2px solid #ffffffa8;
         border-radius: 50%;
       }
-      .target:hover {
-        background: #f06464;
+      .target.route {
+        background: #397f9f;
       }
-      .target.hit {
-        background: var(--green);
-        box-shadow: 0 0 0 9px #72d6a022;
-      }
-      .target .num {
-        position: relative;
-        z-index: 1;
-        font-size: 12px;
-      }
-      .target.dragging {
-        background: var(--yellow);
-        cursor: grabbing;
-      }
+
       .dropzone {
         position: absolute;
         right: 22px;
         bottom: 22px;
         width: 112px;
         height: 82px;
-        border: 2px dashed #8bc8ee99;
+        border: 2px dashed var(--blue);
         border-radius: 12px;
         display: grid;
         place-items: center;
         color: var(--blue);
         font-size: 11px;
         text-align: center;
-        z-index: 1;
+        pointer-events: none;
       }
       .package {
         position: absolute;
@@ -247,12 +214,17 @@
         display: grid;
         place-items: center;
         font-size: 22px;
-        box-shadow: 0 5px 15px #0006;
         touch-action: none;
         cursor: grab;
+        border: 0;
+        padding: 0;
       }
+      .package:active {
+        cursor: grabbing;
+      }
+
       .feedback {
-        min-height: 26px;
+        min-height: 30px;
         padding: 0 20px 14px;
         color: var(--muted);
         font-size: 13px;
@@ -276,10 +248,7 @@
         border-color: var(--red);
         color: white;
       }
-      .btn:disabled {
-        opacity: 0.45;
-        cursor: not-allowed;
-      }
+
       .side-card {
         padding: 18px;
         margin-bottom: 14px;
@@ -295,7 +264,7 @@
       .mode-btn {
         width: 100%;
         text-align: left;
-        padding: 10px 11px;
+        padding: 10px;
         border-radius: 10px;
         border: 1px solid transparent;
         background: transparent;
@@ -304,13 +273,14 @@
         gap: 10px;
         align-items: center;
       }
-      .mode-btn span:first-child {
+      .mode-btn > span:first-child {
         width: 28px;
         height: 28px;
         border-radius: 8px;
         background: var(--panel2);
         display: grid;
         place-items: center;
+        flex: 0 0 auto;
       }
       .mode-btn small {
         display: block;
@@ -336,7 +306,7 @@
         overflow: hidden;
         margin: 10px 0 5px;
       }
-      .progress > i {
+      .progress i {
         display: block;
         height: 100%;
         width: 0;
@@ -345,7 +315,7 @@
       }
       .result {
         display: none;
-        padding: 22px 20px;
+        padding: 22px;
         text-align: center;
         border-top: 1px solid var(--line);
       }
@@ -357,14 +327,15 @@
       }
       .result p {
         color: var(--muted);
-        margin: 0 0 14px;
       }
+
       footer {
         margin-top: 18px;
         color: #8097a2;
         font-size: 12px;
         text-align: center;
       }
+
       @media (max-width: 780px) {
         .layout {
           grid-template-columns: 1fr;
@@ -383,10 +354,7 @@
       }
       @media (max-width: 520px) {
         .shell {
-          padding: 16px 12px 28px;
-        }
-        header {
-          align-items: flex-start;
+          padding: 16px 12px;
         }
         .pill {
           display: none;
@@ -394,46 +362,40 @@
         .stats {
           grid-template-columns: repeat(2, 1fr);
         }
+        .arena {
+          height: 330px;
+        }
         .arena-wrap {
           padding: 0 12px 14px;
         }
-        .game-top {
-          padding: 15px 12px 12px;
-        }
-        .stats {
-          padding: 0 12px 12px;
-        }
-        .feedback {
-          padding: 0 12px 12px;
-        }
+        .game-top,
+        .stats,
+        .feedback,
         .controls {
-          padding: 0 12px 14px;
+          padding-left: 12px;
+          padding-right: 12px;
         }
         .side {
           grid-template-columns: 1fr;
-        }
-        .arena {
-          height: 330px;
         }
       }
     </style>
   </head>
   <body>
-    <main class="shell" id="app">
+    <main class="shell">
       <header>
         <div class="brand">
           <div class="mark">T</div>
           <div>
             <h1>TrackPoint Courier</h1>
-            <div class="sub">
-              A small game for building precise TrackPoint control
-            </div>
+            <div class="sub">Practice. Improve. Master your TrackPoint.</div>
           </div>
         </div>
         <div class="pill">THINKPAD · POINTER TRAINING</div>
       </header>
+
       <div class="layout">
-        <section class="game-card" aria-label="Game">
+        <section class="game-card">
           <div class="game-top">
             <div>
               <div class="level" id="level">STAGE 01 · GET COMFORTABLE</div>
@@ -444,6 +406,7 @@
             </div>
             <div class="pill" id="taskCount">0 / 8 targets</div>
           </div>
+
           <div class="stats">
             <div class="stat">
               <div class="stat-label">Time</div>
@@ -462,132 +425,509 @@
               <div class="stat-value" id="streak">0</div>
             </div>
           </div>
+
           <div class="arena-wrap">
-            <div class="arena" id="arena" aria-label="Game area">
-              <div class="hint" id="hint">
-                Use the TrackPoint to move · Click the red target
+            <div class="arena" id="arena">
+              <div class="hint">
+                Use the TrackPoint to move · Click the target
               </div>
             </div>
           </div>
+
           <div class="feedback" id="feedback" aria-live="polite">
-            Choose a training mode, then press Start. Use the TrackPoint, not
-            the touchpad.
+            Choose a training mode and press Start.
           </div>
+
           <div class="controls">
-            <button class="btn primary" id="start">Start training</button>
-            <button class="btn" id="reset">Reset</button>
-            <button class="btn" id="sound" aria-pressed="false">
-              Sound: off
+            <button class="btn primary" id="start" type="button">
+              Start training
             </button>
+            <button class="btn" id="reset" type="button">Reset</button>
+            <button class="btn" id="sound" type="button">Sound: off</button>
           </div>
-          <div class="result" id="result" aria-live="polite">
+
+          <div class="result" id="result">
             <h2>Route complete!</h2>
             <p id="resultText"></p>
-            <button class="btn primary" id="again">Run it again</button>
+            <button class="btn primary" id="again" type="button">
+              Run it again
+            </button>
           </div>
         </section>
+
         <aside class="side">
           <section class="side-card">
             <h2>Choose your training</h2>
-            <div class="mode-list" id="modeList">
-              <button class="mode-btn active" data-mode="warm">
+            <div class="mode-list">
+              <button class="mode-btn active" data-mode="warm" type="button">
                 <span>🎯</span
                 ><span>Warm-up<small>Large targets · 8 clicks</small></span>
               </button>
-              <button class="mode-btn" data-mode="precision">
+              <button class="mode-btn" data-mode="precision" type="button">
                 <span>🔎</span
                 ><span>Precision<small>Small targets · 10 clicks</small></span>
               </button>
-              <button class="mode-btn" data-mode="route">
+              <button class="mode-btn" data-mode="route" type="button">
                 <span>📦</span
                 ><span
-                  >Courier route<small
-                    >Follow numbered stops · 8 clicks</small
-                  ></span
+                  >Courier route<small>Numbered stops · 8 clicks</small></span
                 >
               </button>
-              <button class="mode-btn" data-mode="drag">
+              <button class="mode-btn" data-mode="drag" type="button">
                 <span>🧲</span
-                ><span
-                  >Package delivery<small
-                    >Click, hold, drag and release</small
-                  ></span
-                >
+                ><span>Package delivery<small>Drag and drop</small></span>
               </button>
             </div>
           </section>
+
           <section class="side-card">
             <h2>Today's practice</h2>
             <p class="tip" id="tip">
-              <strong>Use light pressure.</strong> The TrackPoint responds to
-              how firmly you push. Start slowly; don't try to flick it.
+              <strong>Use light pressure.</strong> Start slowly and avoid
+              pushing too hard.
             </p>
             <div class="progress"><i id="progress"></i></div>
             <div class="sub" id="progressText">0 of 4 modes completed</div>
           </section>
+
           <section class="side-card">
             <h2>TrackPoint technique</h2>
             <p class="tip">
-              Rest your hands on the keyboard. Push the red cap gently in the
-              direction you want the pointer to move. Use the physical buttons
-              below the spacebar to click. Relax between movements.
+              Keep your hands in typing position. Use your index finger to
+              control the red cap. Use your thumbs for the physical mouse
+              buttons. Hold the middle button while moving the TrackPoint to
+              scroll.
             </p>
           </section>
         </aside>
       </div>
+
       <footer>
-        Tip: if the pointer feels too fast or too slow, adjust TrackPoint
-        sensitivity in your operating system settings.
+        Adjust TrackPoint sensitivity in your operating system settings if
+        necessary.
       </footer>
     </main>
+
     <script>
-      (()=>{
-      const $=id=>document.getElementById(id);
-      const arena=$('arena');
-      const modes={
-       warm:{title:'Warm-up',desc:'Move calmly and click the large targets.',level:'STAGE 01 · GET COMFORTABLE',count:8,size:54,tip:'<strong>Use light pressure.</strong> The TrackPoint responds to how firmly you push. Start slowly; don’t try to flick it.'},
-       precision:{title:'Precision',desc:'Aim for smaller targets. Accuracy matters more than speed.',level:'STAGE 02 · FINE CONTROL',count:10,size:25,tip:'<strong>Make tiny corrections.</strong> Ease off pressure as you approach the target instead of overshooting.'},
-       route:{title:'Courier route',desc:'Visit each numbered checkpoint in order.',level:'STAGE 03 · CONTROLLED ROUTE',count:8,size:38,tip:'<strong>Plan the next move.</strong> Look at the next checkpoint before moving. Try smooth, continuous pressure.'},
-       drag:{title:'Package delivery',desc:'Drag the package into the marked delivery zone.',level:'STAGE 04 · CLICK AND DRAG',count:1,size:42,tip:'<strong>Coordinate both hands.</strong> Hold a TrackPoint mouse button, move the pointer, then release over the destination.'}
-      };
-      let mode='warm',running=false,started=0,timer=null,hits=0,misses=0,streak=0,bestStreak=0,index=0,sound=false,completed=new Set(),target=null,packageEl=null,dragging=false,dragOffset={x:0,y:0},elapsed=0;
-      const rand=(min,max)=>Math.random()*(max-min)+min;
-      function clearArena(){arena.querySelectorAll('.target,.package,.dropzone').forEach(e=>e.remove());}
-      function stats(){ $('time').textContent=(elapsed/1000).toFixed(1)+'s';$('accuracy').textContent=(hits+misses?Math.round(hits/(hits+misses)*100):100)+'%';$('misses').textContent=misses;$('streak').textContent=streak;$('taskCount').textContent=mode==='drag'?(hits?'Delivered':'1 package'):index+' / '+modes[mode].count+' targets';}
-      function beep(freq=540){if(!sound)return;try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=freq;g.gain.value=.045;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.08);o.onended=()=>c.close()}catch(e){}}
-      function setMode(m){if(running)return;elapsed=0;hits=misses=streak=index=0;mode=m;document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));$('modeTitle').textContent=modes[m].title;$('modeDesc').textContent=modes[m].desc;$('level').textContent=modes[m].level;$('tip').innerHTML=modes[m].tip;$('result').classList.remove('show');$('feedback').textContent='Press Start when you are ready.';clearArena();stats();}
-      function position(){const r=arena.getBoundingClientRect(),pad= modes[mode].size/2+18;return{x:rand(pad,Math.max(pad,r.width-pad)),y:rand(64,Math.max(65,r.height-pad))};}
-      function spawnTarget(){clearArena();const p=position();target=document.createElement('button');target.type='button';target.className='target';target.style.width=target.style.height=modes[mode].size+'px';target.style.left=p.x+'px';target.style.top=p.y+'px';target.setAttribute('aria-label','Target '+(index+1));if(mode==='route'){target.innerHTML='<span class="num">'+(index+1)+'</span>';target.style.background='#397f9f'}target.addEventListener('click',e=>{e.stopPropagation();if(!running)return;hits++;streak++;bestStreak=Math.max(streak,bestStreak);index++;beep(720);$('feedback').textContent=['Nice control.','Good movement.','Smooth correction.'][Math.floor(Math.random()*3)];stats();if(index>=modes[mode].count)finish();else spawnTarget();});arena.appendChild(target);}
-      function start(){stopTimer();clearArena();$('result').classList.remove('show');running=true;hits=misses=streak=index=0;elapsed=0;started=Date.now();$('start').textContent='Pause';$('feedback').textContent=mode==='drag'?'Drag the package into the delivery zone.':'Click the targets in the arena.';stats();timer=setInterval(()=>{if(running){elapsed=Date.now()-started;stats()}},100);if(mode==='drag')setupDrag();else spawnTarget();}
-      function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
-      function pause(){if(!running)return;running=false;stopTimer();$('start').textContent='Resume';$('feedback').textContent='Paused. Press Resume to continue.';}
-      function resume(){if(running)return;running=true;started=Date.now()-elapsed;timer=setInterval(()=>{elapsed=Date.now()-started;stats()},100);$('start').textContent='Pause';$('feedback').textContent='Keep going — you’ve got this.';}
-      function finish(){
-        running=false;
-        stopTimer();
-        $('start').textContent='Start training';
-        completed.add(mode);
-        $('progress').style.width=(completed.size/4*100)+'%';
-        $('progressText').textContent=completed.size+' of 4 modes completed';
-        $('resultText').textContent=`${hits} successful ${mode==='drag'?'delivery':'clicks'} · ${misses} misses · ${(elapsed/1000).toFixed(1)} seconds · best streak ${bestStreak}.`;
-        $('result').classList.add('show');
-        $('feedback').textContent='Training complete. Take a moment to relax your hand.';
-        beep(880);
-        clearArena();
-        stats();
-      }
-      function setupDrag(){clearArena();const zone=document.createElement('div');zone.className='dropzone';zone.id='zone';zone.innerHTML='DELIVERY<br>ZONE';arena.appendChild(zone);packageEl=document.createElement('button');packageEl.type='button';packageEl.className='package';packageEl.textContent='📦';packageEl.setAttribute('aria-label','Draggable package');packageEl.style.left='35px';packageEl.style.top=(arena.clientHeight/2-21)+'px';arena.appendChild(packageEl);
-      packageEl.addEventListener('pointerdown',e=>{if(!running)return;dragging=true;packageEl.setPointerCapture(e.pointerId);packageEl.classList.add('dragging');const a=arena.getBoundingClientRect(),p=packageEl.getBoundingClientRect();dragOffset.x=e.clientX-p.left;dragOffset.y=e.clientY-p.top;});
-      packageEl.addEventListener('pointermove',e=>{if(!dragging)return;const a=arena.getBoundingClientRect();let x=e.clientX-a.left-dragOffset.x,y=e.clientY-a.top-dragOffset.y;x=Math.max(0,Math.min(a.width-42,x));y=Math.max(0,Math.min(a.height-42,y));packageEl.style.left=x+'px';packageEl.style.top=y+'px';});
-      packageEl.addEventListener('pointerup',()=>{if(!dragging)return;dragging=false;packageEl.classList.remove('dragging');const p=packageEl.getBoundingClientRect(),z=zone.getBoundingClientRect();if(p.left+p.width/2>z.left&&p.left+p.width/2<z.right&&p.top+p.height/2>z.top&&p.top+p.height/2<z.bottom){hits=1;beep(760);finish()}else{misses++;streak=0;beep(180);$('feedback').textContent='Not quite — move the package fully into the delivery zone and release.';stats();}});}
-      }
-      arena.addEventListener('click',e=>{if(!running||mode==='drag')return;if(e.target===arena||e.target.classList.contains('hint')){misses++;streak=0;beep(180);$('feedback').textContent='That was outside the target. Slow down and aim for the center.';stats();}});
-      $('start').addEventListener('click',()=>{if(running)pause();else if($('start').textContent==='Resume')resume();else start()});
-      $('reset').addEventListener('click',()=>{running=false;stopTimer();elapsed=0;hits=misses=streak=index=0;clearArena();$('start').textContent='Start training';$('result').classList.remove('show');$('feedback').textContent='Reset complete. Start whenever you’re ready.';stats();});
-      $('again').addEventListener('click',start);
-      $('sound').addEventListener('click',()=>{sound=!sound;$('sound').textContent='Sound: '+(sound?'on':'off');$('sound').setAttribute('aria-pressed',String(sound));if(sound)beep()});
-      document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
-      setMode('warm');stats();
+      (() => {
+        "use strict";
+
+        const $ = (id) => document.getElementById(id);
+        const arena = $("arena");
+
+        const modes = {
+          warm: {
+            title: "Warm-up",
+            level: "STAGE 01 · GET COMFORTABLE",
+            description: "Move calmly and click the large targets.",
+            count: 8,
+            size: 54,
+            tip: "<strong>Use light pressure.</strong> Start slowly and avoid pushing too hard.",
+          },
+          precision: {
+            title: "Precision",
+            level: "STAGE 02 · FINE CONTROL",
+            description: "Aim for smaller targets. Accuracy matters.",
+            count: 10,
+            size: 25,
+            tip: "<strong>Make tiny corrections.</strong> Slow down as you approach the target.",
+          },
+          route: {
+            title: "Courier route",
+            level: "STAGE 03 · CONTROLLED ROUTE",
+            description: "Visit each numbered checkpoint in order.",
+            count: 8,
+            size: 38,
+            tip: "<strong>Plan your next move.</strong> Look at the next checkpoint before moving.",
+          },
+          drag: {
+            title: "Package delivery",
+            level: "STAGE 04 · CLICK AND DRAG",
+            description: "Drag the package into the delivery zone.",
+            count: 1,
+            size: 42,
+            tip: "<strong>Coordinate both hands.</strong> Hold the mouse button while moving the TrackPoint.",
+          },
+        };
+
+        let mode = "warm";
+        let running = false;
+        let paused = false;
+        let timer = null;
+        let startedAt = 0;
+        let elapsed = 0;
+        let hits = 0;
+        let misses = 0;
+        let streak = 0;
+        let bestStreak = 0;
+        let index = 0;
+        let sound = false;
+        let completed = new Set();
+        let packageDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+
+        function random(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+
+        function clearArena() {
+          packageDragging = false;
+          arena
+            .querySelectorAll(".target, .package, .dropzone")
+            .forEach((el) => el.remove());
+        }
+
+        function updateStats() {
+          $("time").textContent = (elapsed / 1000).toFixed(1) + "s";
+          $("accuracy").textContent =
+            (hits + misses ? Math.round((hits / (hits + misses)) * 100) : 100) +
+            "%";
+          $("misses").textContent = misses;
+          $("streak").textContent = streak;
+          $("taskCount").textContent =
+            mode === "drag"
+              ? hits
+                ? "Delivered"
+                : "1 package"
+              : index + " / " + modes[mode].count + " targets";
+        }
+
+        function beep(frequency = 540) {
+          if (!sound) return;
+          try {
+            const audio = new AudioContext();
+            const oscillator = audio.createOscillator();
+            const gain = audio.createGain();
+            oscillator.frequency.value = frequency;
+            gain.gain.value = 0.04;
+            oscillator.connect(gain);
+            gain.connect(audio.destination);
+            oscillator.start();
+            oscillator.stop(audio.currentTime + 0.08);
+            oscillator.onended = () => audio.close();
+          } catch (error) {
+            console.warn("Audio unavailable", error);
+          }
+        }
+
+        function setMode(newMode) {
+          if (running) return;
+
+          mode = newMode;
+          paused = false;
+          elapsed = 0;
+          hits = 0;
+          misses = 0;
+          streak = 0;
+          bestStreak = 0;
+          index = 0;
+
+          document.querySelectorAll(".mode-btn").forEach((button) => {
+            button.classList.toggle("active", button.dataset.mode === mode);
+          });
+
+          const config = modes[mode];
+          $("modeTitle").textContent = config.title;
+          $("modeDesc").textContent = config.description;
+          $("level").textContent = config.level;
+          $("tip").innerHTML = config.tip;
+          $("result").classList.remove("show");
+          $("start").textContent = "Start training";
+          $("feedback").textContent = "Press Start when you're ready.";
+
+          clearArena();
+          updateStats();
+        }
+
+        function randomPosition(size) {
+          const rect = arena.getBoundingClientRect();
+          const padding = size / 2 + 15;
+
+          return {
+            x: random(padding, Math.max(padding, rect.width - padding)),
+            y: random(65, Math.max(65, rect.height - padding)),
+          };
+        }
+
+        function spawnTarget() {
+          clearArena();
+
+          const config = modes[mode];
+          const position = randomPosition(config.size);
+          const target = document.createElement("button");
+
+          target.className = "target";
+          target.type = "button";
+          target.style.width = config.size + "px";
+          target.style.height = config.size + "px";
+          target.style.left = position.x + "px";
+          target.style.top = position.y + "px";
+          target.setAttribute("aria-label", "Target " + (index + 1));
+
+          if (mode === "route") {
+            target.classList.add("route");
+            target.textContent = index + 1;
+          }
+
+          target.addEventListener("click", (event) => {
+            event.stopPropagation();
+            if (!running) return;
+
+            hits++;
+            streak++;
+            bestStreak = Math.max(bestStreak, streak);
+            index++;
+
+            beep(720);
+            $("feedback").textContent = "Nice control! Keep going.";
+            updateStats();
+
+            if (index >= config.count) {
+              finish();
+            } else {
+              spawnTarget();
+            }
+          });
+
+          arena.appendChild(target);
+        }
+
+        function startTimer() {
+          stopTimer();
+          startedAt = Date.now() - elapsed;
+
+          timer = setInterval(() => {
+            if (!running) return;
+            elapsed = Date.now() - startedAt;
+            updateStats();
+          }, 100);
+        }
+
+        function stopTimer() {
+          if (timer !== null) {
+            clearInterval(timer);
+            timer = null;
+          }
+        }
+
+        function start() {
+          clearArena();
+
+          hits = 0;
+          misses = 0;
+          streak = 0;
+          bestStreak = 0;
+          index = 0;
+          elapsed = 0;
+
+          running = true;
+          paused = false;
+
+          $("result").classList.remove("show");
+          $("start").textContent = "Pause";
+          $("feedback").textContent =
+            mode === "drag"
+              ? "Drag the package into the delivery zone."
+              : "Click the targets using your TrackPoint.";
+
+          updateStats();
+          startTimer();
+
+          if (mode === "drag") {
+            setupDrag();
+          } else {
+            spawnTarget();
+          }
+        }
+
+        function pause() {
+          running = false;
+          paused = true;
+          packageDragging = false;
+          stopTimer();
+
+          $("start").textContent = "Resume";
+          $("feedback").textContent = "Paused. Take a break if needed.";
+        }
+
+        function resume() {
+          running = true;
+          paused = false;
+
+          $("start").textContent = "Pause";
+          $("feedback").textContent = "Continue your training.";
+          startTimer();
+        }
+
+        function finish() {
+          running = false;
+          paused = false;
+          packageDragging = false;
+          stopTimer();
+
+          $("start").textContent = "Start training";
+          completed.add(mode);
+
+          $("progress").style.width = (completed.size / 4) * 100 + "%";
+          $("progressText").textContent =
+            completed.size + " of 4 modes completed";
+
+          $("resultText").textContent =
+            `${hits} successful ${mode === "drag" ? "delivery" : "clicks"} · ` +
+            `${misses} misses · ${(elapsed / 1000).toFixed(1)} seconds · ` +
+            `best streak ${bestStreak}.`;
+
+          $("result").classList.add("show");
+          $("feedback").textContent = "Training complete! Great work.";
+
+          beep(880);
+          clearArena();
+          updateStats();
+        }
+
+        function setupDrag() {
+          clearArena();
+
+          const zone = document.createElement("div");
+          zone.className = "dropzone";
+          zone.innerHTML = "DELIVERY<br>ZONE";
+          arena.appendChild(zone);
+
+          const packageEl = document.createElement("button");
+          packageEl.className = "package";
+          packageEl.type = "button";
+          packageEl.textContent = "📦";
+          packageEl.setAttribute("aria-label", "Package");
+          packageEl.style.left = "35px";
+          packageEl.style.top = arena.clientHeight / 2 - 21 + "px";
+          arena.appendChild(packageEl);
+
+          packageEl.addEventListener("pointerdown", (event) => {
+            if (!running) return;
+            packageDragging = true;
+            packageEl.setPointerCapture(event.pointerId);
+
+            const rect = packageEl.getBoundingClientRect();
+            dragOffset.x = event.clientX - rect.left;
+            dragOffset.y = event.clientY - rect.top;
+          });
+
+          packageEl.addEventListener("pointermove", (event) => {
+            if (!packageDragging || !running) return;
+
+            const rect = arena.getBoundingClientRect();
+            const x = Math.max(
+              0,
+              Math.min(
+                rect.width - 42,
+                event.clientX - rect.left - dragOffset.x,
+              ),
+            );
+            const y = Math.max(
+              0,
+              Math.min(
+                rect.height - 42,
+                event.clientY - rect.top - dragOffset.y,
+              ),
+            );
+
+            packageEl.style.left = x + "px";
+            packageEl.style.top = y + "px";
+          });
+
+          packageEl.addEventListener("pointerup", () => {
+            if (!packageDragging || !running) return;
+            packageDragging = false;
+
+            const packageRect = packageEl.getBoundingClientRect();
+            const zoneRect = zone.getBoundingClientRect();
+            const centerX = packageRect.left + packageRect.width / 2;
+            const centerY = packageRect.top + packageRect.height / 2;
+
+            if (
+              centerX > zoneRect.left &&
+              centerX < zoneRect.right &&
+              centerY > zoneRect.top &&
+              centerY < zoneRect.bottom
+            ) {
+              hits = 1;
+              streak = 1;
+              bestStreak = 1;
+              beep(760);
+              finish();
+            } else {
+              misses++;
+              streak = 0;
+              $("feedback").textContent =
+                "Not quite! Move the package into the delivery zone.";
+              beep(180);
+              updateStats();
+            }
+          });
+
+          packageEl.addEventListener("pointercancel", () => {
+            packageDragging = false;
+          });
+        }
+
+        function reset() {
+          running = false;
+          paused = false;
+          packageDragging = false;
+          stopTimer();
+          clearArena();
+
+          elapsed = 0;
+          hits = misses = streak = bestStreak = index = 0;
+
+          $("start").textContent = "Start training";
+          $("result").classList.remove("show");
+          $("feedback").textContent = "Ready when you are.";
+
+          updateStats();
+        }
+
+        $("start").addEventListener("click", () => {
+          if (running) {
+            pause();
+          } else if (paused) {
+            resume();
+          } else {
+            start();
+          }
+        });
+
+        $("reset").addEventListener("click", reset);
+        $("again").addEventListener("click", start);
+
+        $("sound").addEventListener("click", () => {
+          sound = !sound;
+          $("sound").textContent = "Sound: " + (sound ? "on" : "off");
+          if (sound) beep();
+        });
+
+        document.querySelectorAll(".mode-btn").forEach((button) => {
+          button.addEventListener("click", () => setMode(button.dataset.mode));
+        });
+
+        arena.addEventListener("click", (event) => {
+          if (!running || mode === "drag") return;
+
+          if (
+            event.target === arena ||
+            event.target.classList.contains("hint")
+          ) {
+            misses++;
+            streak = 0;
+            $("feedback").textContent =
+              "Missed! Slow down and aim for the center.";
+            beep(180);
+            updateStats();
+          }
+        });
+
+        setMode("warm");
+        updateStats();
       })();
     </script>
   </body>
