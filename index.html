@@ -207,8 +207,8 @@
 
       .dropzone {
         position: absolute;
-        right: 22px;
-        bottom: 22px;
+        left: 22px;
+        top: 22px;
         width: 112px;
         height: 82px;
         border: 2px dashed var(--blue);
@@ -219,6 +219,11 @@
         font-size: 11px;
         text-align: center;
         pointer-events: none;
+        transition:
+          left 480ms cubic-bezier(0.2, 0.8, 0.2, 1),
+          top 480ms cubic-bezier(0.2, 0.8, 0.2, 1),
+          width 220ms ease,
+          height 220ms ease;
       }
       .package {
         position: absolute;
@@ -515,7 +520,7 @@
               pushing too hard.
             </p>
             <div class="progress" role="progressbar" aria-label="Progress to next stage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progress"></i></div>
-            <div class="sub progress-text" id="progressText">Targets shrink at each milestone. From stage 4, they begin to move. Keep going as long as you like.</div>
+            <div class="sub progress-text" id="progressText">Targets shrink each milestone; aim targets move from stage 4. Delivery zones start shifting at stage 2.</div>
           </section>
 
           <section class="side-card">
@@ -566,8 +571,8 @@
           },
           drag: {
             title: "Package delivery",
-            description: "Drag each package into the delivery zone. Use arrow keys to move it, then press Enter to deliver.",
-            tip: "<strong>Coordinate both hands.</strong> Hold the mouse button while moving the TrackPoint, or use the keyboard controls.",
+            description: "Drag packages into the delivery zone. It starts moving as your run progresses.",
+            tip: "<strong>Track the moving zone.</strong> Hold the mouse button while moving the TrackPoint, or use the keyboard controls.",
           },
         };
 
@@ -702,7 +707,7 @@
           $("tip").innerHTML = config.tip;
           $("hint").textContent =
             mode === "drag"
-              ? "Drag the package · Arrow keys also work"
+              ? "Drag the package · Zone shifts from stage 2"
               : "Use the TrackPoint to move · Click the target";
           clearArena();
 
@@ -742,6 +747,34 @@
             target.style.left = position.x + "px";
             target.style.top = position.y + "px";
             scheduleTargetShift(target, size);
+          }, delay);
+        }
+
+        function scheduleDeliveryZoneShift(zone) {
+          if (
+            !running ||
+            mode !== "drag" ||
+            getStage() < 2 ||
+            targetShiftTimer !== null
+          ) {
+            return;
+          }
+
+          const stage = getStage();
+          const delay = Math.max(1500, 6500 - (stage - 2) * 450);
+          targetShiftTimer = window.setTimeout(() => {
+            targetShiftTimer = null;
+            if (!running || mode !== "drag" || !zone.isConnected) return;
+
+            const rect = arena.getBoundingClientRect();
+            const size = zone.offsetWidth;
+            const padding = 14;
+            const minTop = 60;
+            const maxLeft = Math.max(padding, rect.width - size - padding);
+            const maxTop = Math.max(minTop, rect.height - size - padding);
+            zone.style.left = random(padding, maxLeft) + "px";
+            zone.style.top = random(minTop, maxTop) + "px";
+            scheduleDeliveryZoneShift(zone);
           }, delay);
         }
 
@@ -806,7 +839,7 @@
           $("start").textContent = "Pause run";
           $("feedback").textContent =
             mode === "drag"
-              ? "Drag the package into the delivery zone."
+              ? "Drag the package into the delivery zone. It starts shifting at stage 2."
               : "Click the targets using your TrackPoint.";
 
           updateStats();
@@ -840,6 +873,7 @@
 
           if (mode === "drag") {
             if (!arena.querySelector(".package")) setupDrag();
+            else scheduleDeliveryZoneShift(arena.querySelector(".dropzone"));
           } else {
             const target = arena.querySelector(".target");
             if (target) scheduleTargetShift(target, target.offsetWidth);
@@ -856,6 +890,8 @@
           const zoneSize = Math.max(68, 112 - (getStage() - 1) * 3);
           zone.style.width = zoneSize + "px";
           zone.style.height = zoneSize + "px";
+          zone.style.left = Math.max(14, arena.clientWidth - zoneSize - 22) + "px";
+          zone.style.top = Math.max(60, arena.clientHeight - zoneSize - 22) + "px";
           arena.appendChild(zone);
 
           const packageEl = document.createElement("button");
@@ -892,6 +928,7 @@
               zone.style.height = nextZoneSize + "px";
               packageEl.style.left = "35px";
               packageEl.style.top = arena.clientHeight / 2 - 21 + "px";
+              scheduleDeliveryZoneShift(zone);
             } else {
               registerMiss("Not quite. Move the package fully into the delivery zone.");
             }
@@ -969,6 +1006,8 @@
             event.preventDefault();
             deliverPackage();
           });
+
+          scheduleDeliveryZoneShift(zone);
         }
 
         $("start").addEventListener("click", () => {
