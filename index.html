@@ -3,553 +3,379 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#101820" />
-    <meta name="description" content="An endless TrackPoint training game. Build pointer control through relaxed practice that gradually gets more challenging." />
-    <title>TrackPoint Courier — Endless Pointer Training</title>
+    <meta name="theme-color" content="#101a20" />
+    <meta name="description" content="A playful TrackPoint training arcade. Catch moving cargo, practice precision, and keep your delivery buffer alive." />
+    <title>TrackPoint Courier — Cargo Rush</title>
     <style>
       :root {
-        --bg: #101820;
-        --panel: #182630;
-        --panel2: #20323e;
-        --line: #304652;
-        --text: #edf5f7;
-        --muted: #a7bbc4;
-        --red: #e34c4c;
-        --green: #72d6a0;
-        --yellow: #f2c66d;
-        --blue: #8bc8ee;
+        color-scheme: dark;
+        --ink: #101a20;
+        --panel: #17252b;
+        --panel-raised: #1d3036;
+        --line: #30454a;
+        --white: #f3f4e9;
+        --muted: #94a7a5;
+        --dim: #607574;
+        --lime: #c9f27a;
+        --orange: #ffad69;
+        --coral: #ff786c;
+        --cyan: #7dd4d2;
+        --radius: 18px;
       }
 
-      * {
-        box-sizing: border-box;
-      }
-
+      * { box-sizing: border-box; }
+      html { background: var(--ink); }
       body {
         margin: 0;
-        background: var(--bg);
-        color: var(--text);
-        font:
-          15px/1.5 system-ui,
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
+        min-width: 320px;
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse at 62% -20%, #254047 0, transparent 47%),
+          var(--ink);
+        color: var(--white);
+        font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
-
-      button {
-        font: inherit;
-        cursor: pointer;
-      }
-      button:focus-visible {
-        outline: 3px solid var(--yellow);
+      button { color: inherit; font: inherit; }
+      button:focus-visible, [tabindex="0"]:focus-visible {
+        outline: 3px solid var(--lime);
         outline-offset: 3px;
       }
-
-      .shell {
-        max-width: 1100px;
-        margin: auto;
-        padding: 26px 20px 40px;
-      }
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 22px;
-      }
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .mark {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        background: var(--red);
+      .shell { max-width: 1280px; margin: 0 auto; padding: 26px 28px 34px; }
+      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 0 0 22px; }
+      .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+      .brand-mark {
+        position: relative;
         display: grid;
         place-items: center;
-        font-size: 23px;
-        font-weight: 800;
-      }
-      h1 {
-        font-size: clamp(21px, 3vw, 29px);
-        margin: 0;
-      }
-      .sub {
-        color: var(--muted);
-        font-size: 13px;
-      }
-      .pill {
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 7px 12px;
-        color: var(--muted);
-        font-size: 12px;
-        flex-shrink: 0;
-        white-space: nowrap;
-      }
-
-      .layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 270px;
-        gap: 18px;
-      }
-      .game-card,
-      .side-card {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        overflow: hidden;
-      }
-      .game-top {
-        padding: 18px 20px 14px;
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-      }
-      .mode-title {
-        font-size: 18px;
-        font-weight: 750;
-      }
-      .mode-desc {
-        font-size: 13px;
-        color: var(--muted);
-      }
-      .level {
-        color: var(--yellow);
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .stats {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 8px;
-        padding: 0 20px 15px;
-      }
-      .stat {
-        background: var(--panel2);
-        border-radius: 10px;
-        padding: 9px 11px;
-      }
-      .stat-label {
-        color: var(--muted);
-        font-size: 10px;
-        text-transform: uppercase;
-      }
-      .stat-value {
+        width: 46px;
+        height: 46px;
+        flex: 0 0 auto;
+        border: 1px solid #d8f691;
+        border-radius: 15px;
+        background: var(--lime);
+        color: #15221f;
         font-size: 20px;
-        font-weight: 750;
+        font-weight: 950;
+        transform: rotate(-4deg);
+        box-shadow: 0 5px 0 #89ab50;
       }
+      .brand-kicker, .eyebrow { color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+      h1 { margin: 1px 0 0; font-size: 20px; line-height: 1.2; letter-spacing: -.035em; }
+      .top-status { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+      .status-light { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 13px #c9f27a77; }
+      .layout { display: grid; grid-template-columns: minmax(0, 1fr) 290px; align-items: start; gap: 18px; }
+      .game-card, .side-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: 0 22px 70px #0002; }
+      .game-card { overflow: hidden; }
+      .game-head { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 22px 24px 17px; }
+      .game-head h2 { margin: 3px 0 2px; font-size: clamp(22px, 3vw, 30px); line-height: 1.08; letter-spacing: -.045em; }
+      .game-head p { margin: 0; color: var(--muted); font-size: 13px; }
+      .run-state { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; padding: 8px 11px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+      .run-state .status-light { width: 7px; height: 7px; background: var(--orange); box-shadow: none; }
+      .run-state.is-running { color: var(--lime); border-color: #526443; }
+      .run-state.is-running .status-light { background: var(--lime); box-shadow: 0 0 12px #c9f27a88; }
+      .hud { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; padding: 0 24px 17px; }
+      .hud-stat { min-width: 0; padding: 11px 13px; border: 1px solid #293d42; border-radius: 12px; background: #132126; }
+      .hud-label { color: var(--dim); font-size: 9px; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
+      .hud-value { display: flex; align-items: baseline; gap: 5px; margin-top: 3px; font-size: 21px; font-weight: 850; letter-spacing: -.04em; }
+      .hud-value small { color: var(--muted); font-size: 11px; font-weight: 650; letter-spacing: 0; }
+      .hud-stat.score .hud-value { color: var(--lime); }
+      .hud-stat.buffer .hud-value { color: var(--orange); }
+      .meter { height: 4px; margin-top: 7px; overflow: hidden; border-radius: 5px; background: #334139; }
+      .meter-fill { width: 100%; height: 100%; border-radius: inherit; background: var(--orange); transition: width 220ms ease, background-color 220ms ease; }
 
-      .arena-wrap {
-        padding: 0 20px 18px;
-      }
+      .arena-wrap { padding: 0 24px; }
       .arena {
-        height: 390px;
         position: relative;
+        height: 455px;
         overflow: hidden;
-        border: 1px solid #3b5360;
-        border-radius: 14px;
-        background-color: #13232c;
+        isolation: isolate;
+        border: 1px solid #375054;
+        border-radius: 15px;
+        background-color: #122329;
         background-image:
-          linear-gradient(#ffffff08 1px, transparent 1px),
-          linear-gradient(90deg, #ffffff08 1px, transparent 1px);
+          linear-gradient(#d2edcf0b 1px, transparent 1px),
+          linear-gradient(90deg, #d2edcf0b 1px, transparent 1px);
         background-size: 32px 32px;
         user-select: none;
+        touch-action: pan-y;
       }
-      .hint {
+      .arena::before {
         position: absolute;
-        top: 15px;
-        left: 16px;
-        color: #91a8b2;
-        font-size: 12px;
-        pointer-events: none;
-      }
-
-      .target {
-        position: absolute;
-        z-index: 2;
-        border: 0;
-        border-radius: 50%;
-        background: var(--red);
-        box-shadow: 0 0 0 7px #e34c4c25;
-        transform: translate(-50%, -50%);
-        transition:
-          left 420ms cubic-bezier(0.2, 0.8, 0.2, 1),
-          top 420ms cubic-bezier(0.2, 0.8, 0.2, 1),
-          width 220ms ease,
-          height 220ms ease,
-          box-shadow 160ms ease;
-        display: grid;
-        place-items: center;
-        color: white;
-        font-weight: 800;
-      }
-      .target:hover,
-      .target:focus-visible {
-        box-shadow: 0 0 0 9px #e34c4c35;
-      }
-      .target:focus-visible {
-        outline: 3px solid var(--yellow);
-        outline-offset: 5px;
-      }
-      .target::after {
+        z-index: -1;
+        inset: 0;
+        background: radial-gradient(ellipse at 50% 12%, #2d535044, transparent 55%);
         content: "";
-        position: absolute;
-        inset: 23%;
-        border: 2px solid #ffffffa8;
-        border-radius: 50%;
-      }
-      .target.route,
-      .target.moving {
-        background: #397f9f;
-      }
-      .target.moving {
-        box-shadow: 0 0 0 7px #397f9f35;
-      }
-      .target.moving:hover,
-      .target.moving:focus-visible {
-        box-shadow: 0 0 0 9px #397f9f55;
-      }
-
-      .dropzone {
-        position: absolute;
-        left: 22px;
-        top: 22px;
-        width: 112px;
-        height: 82px;
-        border: 2px dashed var(--blue);
-        border-radius: 12px;
-        display: grid;
-        place-items: center;
-        color: var(--blue);
-        font-size: 11px;
-        text-align: center;
         pointer-events: none;
-        transition:
-          left 480ms cubic-bezier(0.2, 0.8, 0.2, 1),
-          top 480ms cubic-bezier(0.2, 0.8, 0.2, 1),
-          width 220ms ease,
-          height 220ms ease;
       }
-      .package {
+      .arena::after {
         position: absolute;
-        z-index: 3;
-        width: 42px;
-        height: 42px;
-        border-radius: 9px;
-        background: var(--yellow);
-        color: #25313a;
-        display: grid;
-        place-items: center;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.04em;
-        touch-action: none;
-        cursor: grab;
-        border: 0;
-        padding: 0;
+        z-index: 1;
+        right: 0;
+        bottom: 105px;
+        left: 0;
+        border-top: 1px dashed #ffad6940;
+        content: "";
+        pointer-events: none;
       }
-      .package:active {
-        cursor: grabbing;
-      }
-      .package:focus-visible,
-      .mode-btn:focus-visible,
-      .btn:focus-visible {
-        outline: 3px solid var(--yellow);
-        outline-offset: 3px;
-      }
-      .dropzone.delivered {
-        border-color: var(--green);
-        color: var(--green);
-        background: #3ecf8e12;
-      }
-
-
-      .feedback {
-        min-height: 30px;
-        padding: 0 20px 14px;
-        color: var(--muted);
-        font-size: 13px;
-      }
-      .controls {
+      .arena-caption { position: absolute; z-index: 2; top: 15px; left: 17px; color: #9bb1ad; font-size: 10px; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; pointer-events: none; }
+      .wave-tag { position: absolute; z-index: 2; top: 12px; right: 14px; padding: 5px 9px; border: 1px solid #3c5657; border-radius: 999px; background: #14282e; color: var(--cyan); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+      .cargo-layer { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+      .cargo {
+        position: absolute;
         display: flex;
-        flex-wrap: wrap;
-        gap: 9px;
-        padding: 0 20px 20px;
-      }
-      .btn {
-        border: 1px solid var(--line);
-        background: var(--panel2);
-        color: var(--text);
-        border-radius: 10px;
-        padding: 10px 15px;
-        font-weight: 650;
-      }
-      .btn.primary {
-        background: var(--red);
-        border-color: var(--red);
-        color: white;
-      }
-
-      .side-card {
-        padding: 18px;
-        margin-bottom: 14px;
-      }
-      .side-card h2 {
-        font-size: 14px;
-        margin: 0 0 12px;
-      }
-      .mode-list {
-        display: grid;
-        gap: 7px;
-      }
-      .mode-btn {
-        width: 100%;
-        text-align: left;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid transparent;
-        background: transparent;
-        color: var(--text);
-        display: flex;
-        gap: 10px;
+        flex-direction: column;
         align-items: center;
+        justify-content: center;
+        gap: 2px;
+        width: 70px;
+        height: 64px;
+        padding: 0;
+        transform: translate(-50%, -50%);
+        border: 1px solid #ffca80;
+        border-radius: 17px 17px 17px 6px;
+        background: var(--orange);
+        color: #172321;
+        box-shadow: 0 7px 0 #bc7747, 0 10px 23px #0004;
+        cursor: grab;
+        pointer-events: auto;
+        touch-action: none;
+        transition: box-shadow 140ms ease, scale 140ms ease;
+        -webkit-user-select: none;
+        user-select: none;
       }
-      .mode-btn > span:first-child {
-        width: 28px;
-        height: 28px;
-        border-radius: 8px;
-        background: var(--panel2);
+      .cargo::before, .cargo::after { position: absolute; content: ""; pointer-events: none; }
+      .cargo::before { top: 0; bottom: 0; left: 50%; width: 1px; background: #fff4; }
+      .cargo::after { top: 0; right: 0; left: 0; height: 8px; border-bottom: 1px solid #a96e45; background: #fff2; }
+      .cargo:hover, .cargo:focus-visible { scale: 1.07; box-shadow: 0 8px 0 #bc7747, 0 15px 27px #0007; }
+      .cargo.is-dragging { z-index: 10; scale: 1.09; cursor: grabbing; box-shadow: 0 12px 28px #0008; }
+      .cargo-mark { position: relative; z-index: 1; font-size: 13px; font-weight: 950; line-height: 1; }
+      .cargo-value { position: relative; z-index: 1; font-size: 12px; font-weight: 900; letter-spacing: -.03em; }
+      .cargo.precision { width: 54px; height: 52px; border-radius: 50%; background: var(--cyan); border-color: #a3efdf; box-shadow: 0 6px 0 #4a9b94, 0 10px 22px #0004; }
+      .cargo.precision::before { inset: 12px; width: auto; border: 1px solid #15343177; border-radius: 50%; background: transparent; }
+      .cargo.precision::after { display: none; }
+      .cargo.tracking { border-radius: 50%; background: var(--coral); border-color: #ffaaa0; box-shadow: 0 6px 0 #ad514d, 0 10px 22px #0004; }
+      .cargo.tracking::before { top: 9px; right: 9px; bottom: 9px; left: 9px; width: auto; border: 1px solid #6a2e3266; border-radius: 50%; background: transparent; }
+      .cargo.tracking::after { display: none; }
+      .cargo.route { border-radius: 10px; background: var(--lime); border-color: #e1ffa2; box-shadow: 0 6px 0 #85a94e, 0 10px 22px #0004; }
+      .cargo.route::before { top: 9px; bottom: 9px; left: 9px; width: auto; border: 1px dashed #48612b99; border-radius: 5px; background: transparent; }
+      .cargo.route::after { display: none; }
+      .scroll-zone { position: absolute; z-index: 2; right: 0; bottom: 0; left: 0; height: 112px; background: linear-gradient(0deg, #0a1518bb, #0a151855 73%, transparent); pointer-events: none; }
+      .scroll-rail { position: absolute; right: 26px; bottom: 31px; left: 26px; height: 2px; border-radius: 3px; background: #66807c66; }
+      .scroll-rail::before, .scroll-rail::after { position: absolute; top: -4px; width: 10px; height: 10px; border: 1px solid #88a09b; border-radius: 50%; background: #193136; content: ""; }
+      .scroll-rail::before { left: 0; }
+      .scroll-rail::after { right: 0; }
+      .catcher {
+        position: absolute;
+        z-index: 5;
+        bottom: 35px;
+        left: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        width: 142px;
+        height: 66px;
+        padding: 8px;
+        transform: translateX(-50%);
+        border: 2px solid var(--lime);
+        border-bottom: 5px solid #81a447;
+        border-radius: 9px 9px 16px 16px;
+        background: #273a35;
+        color: var(--lime);
+        box-shadow: 0 0 27px #c9f27a1c, inset 0 0 0 4px #c9f27a0b;
+        transition: left 100ms linear, background-color 140ms ease, box-shadow 140ms ease;
+        pointer-events: none;
+      }
+      .catcher.is-ready { background: #384c38; box-shadow: 0 0 36px #c9f27a55, inset 0 0 0 4px #c9f27a13; }
+      .catcher-icon { display: grid; place-items: center; width: 26px; height: 25px; border: 1px solid #c9f27a7d; border-radius: 5px; font-size: 17px; font-weight: 900; line-height: 1; }
+      .catcher-copy { display: grid; gap: 1px; font-size: 9px; font-weight: 950; letter-spacing: .12em; line-height: 1.2; text-align: left; }
+      .catcher-copy small { color: #a5bb8b; font-size: 8px; font-weight: 750; letter-spacing: .07em; }
+      .start-screen {
+        position: absolute;
+        z-index: 8;
+        inset: 0;
         display: grid;
-        place-items: center;
-        flex: 0 0 auto;
-      }
-      .mode-btn small {
-        display: block;
-        color: var(--muted);
-        font-size: 11px;
-      }
-      .mode-btn.active {
-        background: #e34c4c18;
-        border-color: #e34c4c88;
-      }
-      .tip {
-        font-size: 13px;
-        color: var(--muted);
-        margin: 0;
-      }
-      .tip strong {
-        color: var(--text);
-      }
-      .progress {
-        height: 7px;
-        background: #0d171d;
-        border-radius: 99px;
-        overflow: hidden;
-        margin: 10px 0 5px;
-      }
-      .progress i {
-        display: block;
-        height: 100%;
-        width: 0;
-        background: var(--green);
-        transition: width 0.35s ease;
-      }
-      .progress-text {
-        min-height: 36px;
-      }
-      .mode-icon {
-        font-size: 11px;
-        font-weight: 750;
-        letter-spacing: 0.03em;
-        color: var(--blue);
-      }
-      .mode-btn.active .mode-icon {
-        color: var(--yellow);
-      }
-      @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-          scroll-behavior: auto !important;
-          transition-duration: 0.01ms !important;
-        }
-      }
-
-      footer {
-        margin-top: 18px;
-        color: #8097a2;
-        font-size: 12px;
+        align-content: center;
+        justify-items: center;
+        padding: 28px;
+        background: #0e1b20c9;
         text-align: center;
+        backdrop-filter: blur(5px);
       }
+      .start-screen[hidden] { display: none; }
+      .overlay-stamp { display: grid; place-items: center; width: 52px; height: 52px; margin-bottom: 13px; border: 1px solid #d5f492; border-radius: 17px; background: #c9f27a1c; color: var(--lime); font-size: 25px; font-weight: 950; transform: rotate(-5deg); }
+      .start-screen h3 { margin: 0; font-size: clamp(23px, 4vw, 34px); letter-spacing: -.05em; }
+      .start-screen p { max-width: 350px; margin: 9px 0 20px; color: #b4c5bf; font-size: 13px; }
+      .primary-btn, .secondary-btn, .mode-btn { border: 0; font: inherit; cursor: pointer; }
+      .primary-btn { min-height: 43px; padding: 0 19px; border: 1px solid #e1ff9d; border-radius: 10px; background: var(--lime); color: #17221d; font-size: 13px; font-weight: 900; box-shadow: 0 4px 0 #81a447; transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease; }
+      .primary-btn:hover { filter: brightness(1.05); transform: translateY(-1px); box-shadow: 0 5px 0 #81a447; }
+      .primary-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #81a447; }
+      .feedback-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 62px; padding: 10px 24px; }
+      .feedback { min-height: 20px; color: var(--muted); font-size: 12px; }
+      .feedback strong { color: var(--white); }
+      .controls { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+      .secondary-btn { min-height: 35px; padding: 0 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-raised); color: var(--white); font-size: 11px; font-weight: 800; }
+      .secondary-btn:hover { border-color: #607b76; background: #274047; }
+      .secondary-btn:disabled { cursor: not-allowed; opacity: .45; }
+      .side { display: grid; gap: 13px; }
+      .side-card { padding: 17px; }
+      .side-card h3 { margin: 0 0 4px; font-size: 14px; letter-spacing: -.015em; }
+      .side-intro { margin: 0 0 13px; color: var(--muted); font-size: 11px; }
+      .mode-list { display: grid; gap: 7px; }
+      .mode-btn { display: flex; align-items: center; width: 100%; gap: 10px; padding: 9px; border: 1px solid transparent; border-radius: 11px; background: transparent; text-align: left; transition: background-color 130ms ease, border-color 130ms ease; }
+      .mode-btn:hover { background: #1e3035; }
+      .mode-btn[aria-pressed="true"] { border-color: #63794a; background: #28372d; }
+      .mode-icon { display: grid; place-items: center; width: 31px; height: 31px; flex: 0 0 auto; border: 1px solid #405351; border-radius: 9px; background: #1c2d30; color: var(--cyan); font-size: 11px; font-weight: 950; }
+      .mode-btn[aria-pressed="true"] .mode-icon { border-color: #819b52; background: #425533; color: var(--lime); }
+      .mode-copy { display: grid; gap: 1px; color: var(--white); font-size: 12px; font-weight: 850; }
+      .mode-copy small { color: var(--muted); font-size: 10px; font-weight: 550; }
+      .steps { display: grid; gap: 12px; margin: 13px 0 0; padding: 0; list-style: none; }
+      .steps li { display: grid; grid-template-columns: 22px 1fr; align-items: start; gap: 9px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+      .step-n { display: grid; place-items: center; width: 21px; height: 21px; border: 1px solid #465a50; border-radius: 7px; color: var(--lime); font-size: 10px; font-weight: 900; }
+      .steps strong { color: var(--white); font-weight: 800; }
+      .skill-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+      .skill-chip { display: inline-flex; align-items: center; gap: 5px; padding: 5px 7px; border: 1px solid #34494a; border-radius: 999px; color: #b1c1bc; font-size: 9px; font-weight: 800; }
+      .skill-chip i { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); }
+      .skill-chip:nth-child(2) i { background: var(--coral); }
+      .skill-chip:nth-child(3) i { background: var(--lime); }
+      .fine-print { margin: 12px 0 0; padding-top: 11px; border-top: 1px solid #2d4143; color: var(--dim); font-size: 10px; line-height: 1.55; }
+      footer { margin-top: 16px; color: #657a78; font-size: 10px; text-align: center; }
+      .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
 
-      @media (max-width: 780px) {
-        .layout {
-          grid-template-columns: 1fr;
-        }
-        .side {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
-        }
-        .side-card {
-          margin: 0;
-        }
-        .arena {
-          height: 350px;
-        }
+      @media (max-width: 900px) {
+        .shell { padding: 19px 18px 26px; }
+        .layout { grid-template-columns: minmax(0, 1fr) 260px; gap: 12px; }
+        .game-head, .arena-wrap { padding-right: 17px; padding-left: 17px; }
+        .hud { padding-right: 17px; padding-left: 17px; }
+        .feedback-row { padding-right: 17px; padding-left: 17px; }
+        .arena { height: 420px; }
+      }
+      @media (max-width: 740px) {
+        .layout { grid-template-columns: 1fr; }
+        .side { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+        .side-card:first-child { grid-row: span 2; }
+        .arena { height: min(62vh, 440px); min-height: 350px; }
       }
       @media (max-width: 520px) {
-        .shell {
-          padding: 16px 12px;
-        }
-        header > .pill {
-          display: none;
-        }
-        .stats {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .arena {
-          height: 330px;
-        }
-        .arena-wrap {
-          padding: 0 12px 14px;
-        }
-        .game-top,
-        .stats,
-        .feedback,
-        .controls {
-          padding-left: 12px;
-          padding-right: 12px;
-        }
-        .side {
-          grid-template-columns: 1fr;
-        }
+        .shell { padding: 14px 12px 22px; }
+        .topbar { margin-bottom: 15px; }
+        .brand-mark { width: 39px; height: 39px; border-radius: 12px; }
+        h1 { font-size: 17px; }
+        .brand-kicker { font-size: 8px; }
+        .top-status { font-size: 9px; }
+        .top-status .status-light { width: 6px; height: 6px; }
+        .game-head { padding: 17px 13px 14px; }
+        .game-head h2 { font-size: 23px; }
+        .game-head p { max-width: 245px; font-size: 11px; }
+        .run-state { padding: 7px 8px; font-size: 9px; }
+        .hud { gap: 6px; padding: 0 13px 13px; }
+        .hud-stat { padding: 9px 8px; }
+        .hud-label { font-size: 8px; letter-spacing: .08em; }
+        .hud-value { font-size: 18px; }
+        .arena-wrap { padding: 0 10px; }
+        .arena { height: min(62vh, 410px); min-height: 330px; }
+        .feedback-row { align-items: flex-start; flex-direction: column; gap: 8px; padding: 11px 13px 14px; }
+        .controls { width: 100%; }
+        .secondary-btn { min-height: 33px; }
+        .side { grid-template-columns: 1fr; }
+        .side-card:first-child { grid-row: auto; }
+        .side-card { padding: 14px; }
+        .mode-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .mode-btn { align-items: flex-start; gap: 7px; padding: 7px 5px; }
+        .mode-icon { width: 27px; height: 27px; }
+        .mode-copy { font-size: 11px; }
+        .mode-copy small { font-size: 9px; }
+        .catcher { width: 130px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
       }
     </style>
   </head>
   <body>
     <main class="shell">
-      <header>
+      <header class="topbar">
         <div class="brand">
-          <div class="mark">T</div>
+          <div class="brand-mark" aria-hidden="true">T</div>
           <div>
-            <h1>TrackPoint Courier</h1>
-            <div class="sub">One run. More challenge with every milestone.</div>
+            <div class="brand-kicker">TrackPoint training arcade</div>
+            <h1>Courier Club</h1>
           </div>
         </div>
-        <div class="pill">ENDLESS POINTER PRACTICE</div>
+        <div class="top-status"><span class="status-light" aria-hidden="true"></span> Shift is open</div>
       </header>
 
       <div class="layout">
-        <section class="game-card">
-          <div class="game-top">
+        <section class="game-card" aria-labelledby="gameTitle">
+          <div class="game-head">
             <div>
-              <div class="level" id="level">STAGE 01 · GET COMFORTABLE</div>
-              <div class="mode-title" id="modeTitle">Warm-up</div>
-              <div class="mode-desc" id="modeDesc">
-                Move calmly and click the large targets.
-              </div>
+              <div class="eyebrow" id="shiftLabel">Shift 01 · All-round circuit</div>
+              <h2 id="gameTitle">Catch the good stuff.</h2>
+              <p id="modeDescription">A little precision, a little tracking. Keep every parcel moving.</p>
             </div>
-            <div class="pill" id="taskCount">0 hits · 0 pts</div>
+            <div class="run-state" id="runState"><span class="status-light" aria-hidden="true"></span><span id="runStateText">Ready</span></div>
           </div>
 
-          <div class="stats">
-            <div class="stat">
-              <div class="stat-label">Time</div>
-              <div class="stat-value" id="time">0.0s</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Score</div>
-              <div class="stat-value" id="score">0</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Accuracy</div>
-              <div class="stat-value" id="accuracy">100%</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Misses</div>
-              <div class="stat-value" id="misses">0</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Streak</div>
-              <div class="stat-value" id="streak">0</div>
-            </div>
+          <div class="hud" aria-label="Run statistics">
+            <div class="hud-stat score"><div class="hud-label">Points banked</div><div class="hud-value" id="score">0 <small>pts</small></div></div>
+            <div class="hud-stat buffer"><div class="hud-label">Contract buffer</div><div class="hud-value" id="buffer">$100</div><div class="meter" role="progressbar" aria-label="Contract buffer remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><div class="meter-fill" id="bufferMeter"></div></div></div>
+            <div class="hud-stat"><div class="hud-label">Delivered</div><div class="hud-value" id="delivered">0 <small>items</small></div></div>
+            <div class="hud-stat"><div class="hud-label">Clean streak</div><div class="hud-value" id="streak">0 <small>in a row</small></div></div>
           </div>
 
           <div class="arena-wrap">
-            <div class="arena" id="arena">
-              <div class="hint" id="hint">
-                Use the TrackPoint to move · Click the target
+            <div class="arena" id="arena" tabindex="0" role="application" aria-label="Cargo catching game. Scroll over the bottom rail to move the catch box. Use arrow keys when this area is focused.">
+              <div class="arena-caption">Cargo in transit <span id="runClock">· 00:00</span></div>
+              <div class="wave-tag" id="waveTag">Warm-up pace</div>
+              <div class="cargo-layer" id="cargoLayer"></div>
+              <div class="scroll-zone" aria-hidden="true"><div class="scroll-rail"></div></div>
+              <div class="catcher" id="catcher" aria-hidden="true">
+                <span class="catcher-icon">+</span>
+                <span class="catcher-copy">CATCH BOX<small>SCROLL TO MOVE</small></span>
+              </div>
+              <div class="start-screen" id="startScreen">
+                <div class="overlay-stamp" aria-hidden="true">↗</div>
+                <h3 id="overlayTitle">Ready to run a shift?</h3>
+                <p id="overlayCopy">Grab the parcels and drop them in your catch box. Every miss spends part of your contract buffer.</p>
+                <button class="primary-btn" id="startButton" type="button">Start the run <span aria-hidden="true">→</span></button>
               </div>
             </div>
           </div>
 
-          <div class="feedback" id="feedback" aria-live="polite">
-            Choose a training mode and start your endless run.
+          <div class="feedback-row">
+            <div class="feedback" id="feedback" aria-live="polite">Scroll in the lower rail to line up your box, then grab a parcel.</div>
+            <div class="controls">
+              <button class="secondary-btn" id="pauseButton" type="button" disabled>Pause</button>
+              <button class="secondary-btn" id="resetButton" type="button">Reset</button>
+            </div>
           </div>
-
-          <div class="controls">
-            <button class="btn primary" id="start" type="button">Start endless run</button>
-            <button class="btn" id="sound" type="button" aria-pressed="false">Sound: off</button>
-          </div>
-
         </section>
 
-        <aside class="side">
+        <aside class="side" aria-label="Training guide">
           <section class="side-card">
-            <h2>Choose your training</h2>
-            <div class="mode-list">
-              <button class="mode-btn active" data-mode="warm" type="button" aria-pressed="true">
-                <span class="mode-icon" aria-hidden="true">01</span>
-                <span>Warm-up<small>Large targets · relaxed start</small></span>
-              </button>
-              <button class="mode-btn" data-mode="precision" type="button" aria-pressed="false">
-                <span class="mode-icon" aria-hidden="true">02</span>
-                <span>Precision<small>Smaller targets · fine control</small></span>
-              </button>
-              <button class="mode-btn" data-mode="route" type="button" aria-pressed="false">
-                <span class="mode-icon" aria-hidden="true">03</span>
-                <span>Courier route<small>Numbered stops · steady aim</small></span>
-              </button>
-              <button class="mode-btn" data-mode="drag" type="button" aria-pressed="false">
-                <span class="mode-icon" aria-hidden="true">04</span>
-                <span>Package delivery<small>Drag and drop · repeat deliveries</small></span>
-              </button>
-              <button class="mode-btn" data-mode="moving" type="button" aria-pressed="false">
-                <span class="mode-icon" aria-hidden="true">05</span>
-                <span>Moving targets<small>Follow and click as they move</small></span>
-              </button>
+            <h3>Pick your practice</h3>
+            <p class="side-intro">Mix the skills or zoom in on one.</p>
+            <div class="mode-list" role="group" aria-label="Training mode">
+              <button class="mode-btn" type="button" data-mode="mix" aria-pressed="true"><span class="mode-icon" aria-hidden="true">MX</span><span class="mode-copy">All-round<small>Every skill in the mix</small></span></button>
+              <button class="mode-btn" type="button" data-mode="precision" aria-pressed="false"><span class="mode-icon" aria-hidden="true">PX</span><span class="mode-copy">Precision<small>Smaller, valuable parcels</small></span></button>
+              <button class="mode-btn" type="button" data-mode="tracking" aria-pressed="false"><span class="mode-icon" aria-hidden="true">TR</span><span class="mode-copy">Tracking<small>Catch the drifting ones</small></span></button>
+              <button class="mode-btn" type="button" data-mode="route" aria-pressed="false"><span class="mode-icon" aria-hidden="true">RT</span><span class="mode-copy">Route run<small>Chase alternating lanes</small></span></button>
             </div>
           </section>
 
           <section class="side-card">
-            <h2>Endless progression</h2>
-            <p class="tip" id="tip">
-              <strong>Use light pressure.</strong> Start slowly and avoid
-              pushing too hard.
-            </p>
-            <div class="progress" role="progressbar" aria-label="Progress to next stage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progress"></i></div>
-            <div class="sub progress-text" id="progressText">Moving Targets starts shifting right away, and speeds up with each stage. Other targets move from stage 4; delivery zones shift from stage 2.</div>
-          </section>
-
-          <section class="side-card">
-            <h2>TrackPoint technique</h2>
-            <p class="tip">
-              Keep your hands in typing position. Use your index finger to
-              control the red cap. Use your thumbs for the physical mouse
-              buttons. Hold the middle button while moving the TrackPoint to
-              scroll.
-            </p>
+            <h3>Three ways to train</h3>
+            <div class="skill-chips"><span class="skill-chip"><i aria-hidden="true"></i> Precision</span><span class="skill-chip"><i aria-hidden="true"></i> Tracking</span><span class="skill-chip"><i aria-hidden="true"></i> Scrolling</span></div>
+            <ol class="steps">
+              <li><span class="step-n">1</span><span><strong>Catch the parcel.</strong> Drag it anywhere in the box—or tap / press Enter to deliver.</span></li>
+              <li><span class="step-n">2</span><span><strong>Work the rail.</strong> Scroll in the bottom band to slide your box left and right.</span></li>
+              <li><span class="step-n">3</span><span><strong>Protect the buffer.</strong> A missed parcel costs its printed value. At zero, the shift is over.</span></li>
+            </ol>
+            <p class="fine-print">Keyboard: focus the playfield and use ← / → to move the box. Keep your hands in typing position and use light TrackPoint pressure.</p>
           </section>
         </aside>
       </div>
-
-      <footer>
-        No rounds and no hard stop. Pause whenever you like, then keep your run going.
-      </footer>
+      <footer>Small moves. Smooth pickups. No rush—until there is.</footer>
     </main>
 
     <script>
@@ -558,524 +384,336 @@
 
         const $ = (id) => document.getElementById(id);
         const arena = $("arena");
-
-        const modes = {
-          warm: {
-            title: "Warm-up",
-            description: "Move calmly and click the large targets.",
-            size: 58,
-            minSize: 18,
-            tip: "<strong>Use light pressure.</strong> Start slowly and avoid pushing too hard.",
-          },
-          precision: {
-            title: "Precision",
-            description: "Aim for smaller targets. Accuracy matters.",
-            size: 38,
-            minSize: 16,
-            tip: "<strong>Make tiny corrections.</strong> Slow down as you approach the target.",
-          },
-          route: {
-            title: "Courier route",
-            description: "Visit each numbered checkpoint in order.",
-            size: 48,
-            minSize: 20,
-            tip: "<strong>Plan your next move.</strong> Look at the next checkpoint before moving.",
-          },
-          moving: {
-            title: "Moving targets",
-            description: "Click the target as it glides around the arena.",
-            size: 48,
-            minSize: 16,
-            tip: "<strong>Lead the target.</strong> Follow its path and click when it crosses your line.",
-          },
-          drag: {
-            title: "Package delivery",
-            description: "Drag packages into the delivery zone. It starts moving as your run progresses.",
-            tip: "<strong>Track the moving zone.</strong> Hold the mouse button while moving the TrackPoint, or use the keyboard controls.",
-          },
+        const cargoLayer = $("cargoLayer");
+        const catcher = $("catcher");
+        const startScreen = $("startScreen");
+        const modeConfigs = {
+          mix: { label: "All-round circuit", description: "A little precision, a little tracking. Keep every parcel moving.", wave: "Mixed circuit" },
+          precision: { label: "Precision circuit", description: "Small targets, generous values. Slow down and place each pickup.", wave: "Fine handling" },
+          tracking: { label: "Tracking circuit", description: "Every parcel sways as it falls. Stay with it, then make the drop.", wave: "Moving cargo" },
+          route: { label: "Route circuit", description: "Parcels alternate across the lanes. Scroll your box to stay on route.", wave: "Lane changes" },
         };
-
-        let mode = "warm";
+        const maxBuffer = 100;
+        const modes = document.querySelectorAll(".mode-btn");
+        const progressbar = document.querySelector('[role="progressbar"]');
+        let mode = "mix";
         let running = false;
         let paused = false;
-        let timer = null;
-        let targetShiftTimer = null;
-        let startedAt = 0;
-        let elapsed = 0;
-        let hits = 0;
+        let score = 0;
+        let buffer = maxBuffer;
+        let delivered = 0;
         let misses = 0;
         let streak = 0;
-        let score = 0;
-        let sound = false;
-        let packageDragging = false;
-        let dragOffset = { x: 0, y: 0 };
+        let elapsed = 0;
+        let lastFrame = 0;
+        let spawnElapsed = 0;
+        let nextRouteLane = 0;
+        let catcherX = 0;
+        let activeDrag = null;
+        let cargoId = 0;
+        let animationFrame = 0;
 
-        function random(min, max) {
-          return Math.random() * (max - min) + min;
+        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+        const random = (min, max) => Math.random() * (max - min) + min;
+        const getLevel = () => Math.floor(delivered / 6) + 1;
+        const formatTime = (ms) => {
+          const seconds = Math.floor(ms / 1000);
+          return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+        };
+
+        function updateCatcher() {
+          const width = arena.clientWidth;
+          catcherX = clamp(catcherX || width / 2, 76, width - 76);
+          catcher.style.left = `${catcherX}px`;
         }
 
-        function getStage() {
-          return Math.floor((Math.sqrt(hits + 1) - 1) / 2) + 1;
+        function updateHud() {
+          $("score").innerHTML = `${score.toLocaleString()} <small>pts</small>`;
+          $("buffer").textContent = `$${buffer}`;
+          $("delivered").innerHTML = `${delivered} <small>${delivered === 1 ? "item" : "items"}</small>`;
+          $("streak").innerHTML = `${streak} <small>in a row</small>`;
+          $("runClock").textContent = `· ${formatTime(elapsed)}`;
+          $("shiftLabel").textContent = `Shift ${String(getLevel()).padStart(2, "0")} · ${modeConfigs[mode].label}`;
+          $("bufferMeter").style.width = `${buffer}%`;
+          $("bufferMeter").style.backgroundColor = buffer <= 30 ? "var(--coral)" : "var(--orange)";
+          progressbar.setAttribute("aria-valuenow", String(buffer));
+          $("waveTag").textContent = getLevel() === 1 ? modeConfigs[mode].wave : `Shift ${String(getLevel()).padStart(2, "0")}`;
         }
 
-        function getStageLabel(stage) {
-          if (stage <= 2) return "GET COMFORTABLE";
-          if (stage <= 4) return "FIND YOUR RHYTHM";
-          if (stage <= 8) return "TIGHTER CONTROL";
-          if (stage <= 12) return "HIGH PRESSURE";
-          return "ENDLESS MASTERY";
+        function setMode(nextMode) {
+          mode = nextMode;
+          modes.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.mode === mode)));
+          $("modeDescription").textContent = modeConfigs[mode].description;
+          updateHud();
         }
 
-        function getStageStartHits(stage) {
-          return 4 * (stage - 1) * stage;
+        function clearCargo() {
+          activeDrag = null;
+          cargoLayer.replaceChildren();
+          catcher.classList.remove("is-ready");
         }
 
-        function getNextStageHits(stage) {
-          return 4 * stage * (stage + 1);
-        }
+        function spawnCargo() {
+          const width = arena.clientWidth;
+          const base = mode === "precision" ? "precision" : mode === "tracking" ? "tracking" : mode === "route" ? "route" : ["precision", "tracking", "route"][Math.floor(Math.random() * 3)];
+          const type = base;
+          const value = Math.round(random(type === "precision" ? 14 : 8, type === "precision" ? 25 : 19));
+          const item = document.createElement("button");
+          const icon = type === "precision" ? "•" : type === "tracking" ? "↗" : String((delivered + misses + 1) % 9 || 1);
+          item.type = "button";
+          item.className = `cargo ${type}`;
+          item.dataset.id = String(++cargoId);
+          item.dataset.value = String(value);
+          item.dataset.x = "0";
+          item.dataset.y = "0";
+          item.dataset.baseX = "0";
+          item.dataset.phase = String(random(0, Math.PI * 2));
+          item.dataset.moved = "false";
+          item.setAttribute("aria-label", `${type} parcel worth ${value} points. Drag it into the catch box, or press Enter to deliver.`);
+          item.innerHTML = `<span class="cargo-mark" aria-hidden="true">${icon}</span><span class="cargo-value" aria-hidden="true">$${value}</span>`;
 
-        function getTargetSize(config) {
-          return Math.max(
-            config.minSize,
-            Math.round(config.size * Math.pow(0.91, getStage() - 1)),
-          );
-        }
-
-        function clearArena() {
-          packageDragging = false;
-          if (targetShiftTimer !== null) {
-            clearTimeout(targetShiftTimer);
-            targetShiftTimer = null;
-          }
-          arena
-            .querySelectorAll(".target, .package, .dropzone")
-            .forEach((el) => el.remove());
-        }
-
-        function updateStats() {
-          const stage = getStage();
-          const stageStart = getStageStartHits(stage);
-          const nextStage = getNextStageHits(stage);
-          const stageProgress = ((hits - stageStart) / (nextStage - stageStart)) * 100;
-          const progressbar = document.querySelector('[role="progressbar"]');
-
-          $("time").textContent = (elapsed / 1000).toFixed(1) + "s";
-          $("score").textContent = score.toLocaleString();
-          $("accuracy").textContent =
-            (hits + misses ? Math.round((hits / (hits + misses)) * 100) : 100) +
-            "%";
-          $("misses").textContent = misses;
-          $("streak").textContent = streak;
-          $("taskCount").textContent =
-            `${hits} ${hits === 1 ? "hit" : "hits"} · ${score.toLocaleString()} pts`;
-          $("level").textContent =
-            `STAGE ${String(stage).padStart(2, "0")} · ${getStageLabel(stage)}`;
-          $("progress").style.width = stageProgress + "%";
-          progressbar.setAttribute("aria-valuenow", String(Math.floor(stageProgress)));
-          $("progressText").textContent =
-            `${hits - stageStart} / ${nextStage - stageStart} hits · ${nextStage - hits} to stage ${stage + 1}`;
-        }
-
-        function awardHit() {
-          hits++;
-          streak++;
-          const points = 10 + Math.min(streak - 1, 9) * 2;
-          score += points;
-          return points;
-        }
-
-        function registerMiss(message) {
-          misses++;
-          streak = 0;
-          $("feedback").textContent = message;
-          beep(180);
-          updateStats();
-        }
-
-        function beep(frequency = 540) {
-          if (!sound) return;
-          try {
-            const audio = new AudioContext();
-            const oscillator = audio.createOscillator();
-            const gain = audio.createGain();
-            oscillator.frequency.value = frequency;
-            gain.gain.value = 0.04;
-            oscillator.connect(gain);
-            gain.connect(audio.destination);
-            oscillator.start();
-            oscillator.stop(audio.currentTime + 0.08);
-            oscillator.onended = () => audio.close();
-          } catch (error) {
-            console.warn("Audio unavailable", error);
-          }
-        }
-
-        function setMode(newMode) {
-          if (newMode === mode) return;
-
-          mode = newMode;
-          document.querySelectorAll(".mode-btn").forEach((button) => {
-            const isActive = button.dataset.mode === mode;
-            button.classList.toggle("active", isActive);
-            button.setAttribute("aria-pressed", String(isActive));
-          });
-
-          const config = modes[mode];
-          $("modeTitle").textContent = config.title;
-          $("modeDesc").textContent = config.description;
-          $("tip").innerHTML = config.tip;
-          $("hint").textContent =
-            mode === "drag"
-              ? "Drag the package · Zone shifts from stage 2"
-              : mode === "moving"
-                ? "Follow the moving target · Click to score"
-                : "Use the TrackPoint to move · Click the target";
-          clearArena();
-
-          if (running) {
-            if (mode === "drag") setupDrag();
-            else spawnTarget();
-            $("feedback").textContent = `${config.title} selected. Your run continues.`;
-          } else if (paused) {
-            $("feedback").textContent = `Paused. ${config.title} will start when you resume.`;
+          let x;
+          if (mode === "route") {
+            x = width * (nextRouteLane ? 0.78 : 0.22) + random(-18, 18);
+            nextRouteLane = 1 - nextRouteLane;
           } else {
-            $("feedback").textContent = "Choose a training mode and press Start.";
+            x = random(42, Math.max(43, width - 42));
           }
-
-          updateStats();
+          const y = 55;
+          item.dataset.x = String(x);
+          item.dataset.baseX = String(x);
+          item.dataset.y = String(y);
+          item.style.left = `${x}px`;
+          item.style.top = `${y}px`;
+          item.addEventListener("pointerdown", beginDrag);
+          item.addEventListener("click", (event) => {
+            if (event.detail === 0 && running && !paused && item.isConnected) deliverCargo(item, "Keyboard pickup");
+          });
+          cargoLayer.append(item);
         }
 
-        function randomPosition(size) {
-          const rect = arena.getBoundingClientRect();
-          const padding = size / 2 + 15;
-
-          return {
-            x: random(padding, Math.max(padding, rect.width - padding)),
-            y: random(65, Math.max(65, rect.height - padding)),
+        function beginDrag(event) {
+          if (!running || paused || activeDrag || event.button !== 0) return;
+          const item = event.currentTarget;
+          event.preventDefault();
+          item.setPointerCapture(event.pointerId);
+          item.classList.add("is-dragging");
+          activeDrag = {
+            item,
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            originalX: Number(item.dataset.x),
+            originalY: Number(item.dataset.y),
+            moved: false,
           };
         }
 
-        function scheduleTargetShift(target, size) {
-          const movingMode = mode === "moving";
-          if (!running || mode === "drag" || (!movingMode && getStage() < 4)) return;
-
-          const stage = getStage();
-          const delay = movingMode
-            ? Math.max(900, 2600 - (stage - 1) * 180)
-            : Math.max(1600, 5600 - (stage - 4) * 350);
-          targetShiftTimer = window.setTimeout(() => {
-            targetShiftTimer = null;
-            if (!running || !target.isConnected) return;
-
-            const position = randomPosition(size);
-            target.style.left = position.x + "px";
-            target.style.top = position.y + "px";
-            scheduleTargetShift(target, size);
-          }, delay);
+        function dragMove(event) {
+          if (!activeDrag || event.pointerId !== activeDrag.pointerId) return;
+          const rect = arena.getBoundingClientRect();
+          const x = clamp(event.clientX - rect.left, 26, rect.width - 26);
+          const y = clamp(event.clientY - rect.top, 35, rect.height - 32);
+          if (Math.hypot(event.clientX - activeDrag.startX, event.clientY - activeDrag.startY) > 8) activeDrag.moved = true;
+          activeDrag.item.dataset.x = String(x);
+          activeDrag.item.dataset.y = String(y);
+          activeDrag.item.style.left = `${x}px`;
+          activeDrag.item.style.top = `${y}px`;
+          const itemRect = activeDrag.item.getBoundingClientRect();
+          const boxRect = catcher.getBoundingClientRect();
+          const overlaps = itemRect.left < boxRect.right && itemRect.right > boxRect.left && itemRect.top < boxRect.bottom && itemRect.bottom > boxRect.top;
+          catcher.classList.toggle("is-ready", overlaps);
         }
 
-        function scheduleDeliveryZoneShift(zone) {
-          if (
-            !running ||
-            mode !== "drag" ||
-            getStage() < 2 ||
-            targetShiftTimer !== null
-          ) {
-            return;
-          }
-
-          const stage = getStage();
-          const delay = Math.max(1500, 6500 - (stage - 2) * 450);
-          targetShiftTimer = window.setTimeout(() => {
-            targetShiftTimer = null;
-            if (!running || mode !== "drag" || !zone.isConnected) return;
-
-            const rect = arena.getBoundingClientRect();
-            const size = zone.offsetWidth;
-            const padding = 14;
-            const minTop = 60;
-            const maxLeft = Math.max(padding, rect.width - size - padding);
-            const maxTop = Math.max(minTop, rect.height - size - padding);
-            zone.style.left = random(padding, maxLeft) + "px";
-            zone.style.top = random(minTop, maxTop) + "px";
-            scheduleDeliveryZoneShift(zone);
-          }, delay);
-        }
-
-        function spawnTarget() {
-          clearArena();
-
-          const config = modes[mode];
-          const size = getTargetSize(config);
-          const position = randomPosition(size);
-          const target = document.createElement("button");
-
-          target.className = "target";
-          target.type = "button";
-          target.style.width = size + "px";
-          target.style.height = size + "px";
-          target.style.left = position.x + "px";
-          target.style.top = position.y + "px";
-          target.setAttribute(
-            "aria-label",
-            (mode === "moving" ? "Moving target " : "Target ") + (hits + 1),
-          );
-
-          if (mode === "route") {
-            target.classList.add("route");
-            target.textContent = hits + 1;
-          } else if (mode === "moving") {
-            target.classList.add("moving");
-          }
-
-          target.addEventListener("click", (event) => {
-            event.stopPropagation();
-            if (!running) return;
-
-            const points = awardHit();
-            beep(720);
-            $("feedback").textContent = `Nice control! +${points} points · ${streak} in a row`;
-            updateStats();
-            spawnTarget();
-          });
-
-          arena.appendChild(target);
-          scheduleTargetShift(target, size);
-        }
-
-        function startTimer() {
-          stopTimer();
-          startedAt = Date.now() - elapsed;
-
-          timer = setInterval(() => {
-            if (!running) return;
-            elapsed = Date.now() - startedAt;
-            updateStats();
-          }, 100);
-        }
-
-        function stopTimer() {
-          if (timer !== null) {
-            clearInterval(timer);
-            timer = null;
+        function dragEnd(event) {
+          if (!activeDrag || event.pointerId !== activeDrag.pointerId) return;
+          const drag = activeDrag;
+          activeDrag = null;
+          drag.item.classList.remove("is-dragging");
+          catcher.classList.remove("is-ready");
+          const itemRect = drag.item.getBoundingClientRect();
+          const boxRect = catcher.getBoundingClientRect();
+          const overlaps = itemRect.left < boxRect.right && itemRect.right > boxRect.left && itemRect.top < boxRect.bottom && itemRect.bottom > boxRect.top;
+          if (overlaps || !drag.moved) {
+            deliverCargo(drag.item, overlaps ? "Smooth drop" : "Quick pickup");
+          } else {
+            penalizeCargo(drag.item, "That one slipped past the box.");
           }
         }
 
-        function start() {
-          running = true;
-          paused = false;
-
-          $("start").textContent = "Pause run";
-          $("feedback").textContent =
-            mode === "drag"
-              ? "Drag the package into the delivery zone. It starts shifting at stage 2."
-              : mode === "moving"
-                ? "Click the moving target before it changes position."
-                : "Click the targets using your TrackPoint.";
-
-          updateStats();
-          startTimer();
-
-          if (mode === "drag") setupDrag();
-          else spawnTarget();
+        function deliverCargo(item, message) {
+          if (!item?.isConnected || !running || paused) return;
+          const value = Number(item.dataset.value);
+          delivered++;
+          streak++;
+          const bonus = streak > 1 ? Math.min((streak - 1) * 2, 20) : 0;
+          score += value + bonus;
+          item.remove();
+          catcher.classList.add("is-ready");
+          $("feedback").innerHTML = `<strong>${message}.</strong> +${value + bonus} points${bonus ? ` · ${streak} in a row` : ""}`;
+          setTimeout(() => catcher.classList.remove("is-ready"), 260);
+          updateHud();
         }
 
-        function pause() {
+        function penalizeCargo(item, message) {
+          if (!item?.isConnected) return;
+          const value = Number(item.dataset.value);
+          misses++;
+          streak = 0;
+          buffer = Math.max(0, buffer - value);
+          item.remove();
+          $("feedback").textContent = `${message} −$${value} buffer · ${buffer} left.`;
+          updateHud();
+          if (buffer === 0) endRun();
+        }
+
+        function endRun() {
           running = false;
-          paused = true;
-          packageDragging = false;
-          stopTimer();
-          if (targetShiftTimer !== null) {
-            clearTimeout(targetShiftTimer);
-            targetShiftTimer = null;
-          }
-
-          $("start").textContent = "Resume run";
-          $("feedback").textContent = "Run paused. Take a break, then pick up where you left off.";
+          paused = false;
+          clearCargo();
+          $("runState").classList.remove("is-running");
+          $("runStateText").textContent = "Shift over";
+          $("pauseButton").disabled = true;
+          $("overlayTitle").textContent = "Contract complete.";
+          $("overlayCopy").textContent = `You banked ${score.toLocaleString()} points and delivered ${delivered} ${delivered === 1 ? "parcel" : "parcels"}. Ready for another shift?`;
+          $("startButton").innerHTML = 'Run it back <span aria-hidden="true">→</span>';
+          startScreen.hidden = false;
+          $("feedback").textContent = `The buffer ran dry after ${misses} missed ${misses === 1 ? "delivery" : "deliveries"}.`;
         }
 
-        function resume() {
+        function startRun() {
           running = true;
           paused = false;
-
-          $("start").textContent = "Pause run";
-          $("feedback").textContent = "Run resumed. Keep building your streak.";
-          startTimer();
-
-          if (mode === "drag") {
-            if (!arena.querySelector(".package")) setupDrag();
-            else scheduleDeliveryZoneShift(arena.querySelector(".dropzone"));
-          } else {
-            const target = arena.querySelector(".target");
-            if (target) scheduleTargetShift(target, target.offsetWidth);
-            else spawnTarget();
-          }
+          score = 0;
+          buffer = maxBuffer;
+          delivered = 0;
+          misses = 0;
+          streak = 0;
+          elapsed = 0;
+          spawnElapsed = 0;
+          lastFrame = 0;
+          nextRouteLane = 0;
+          clearCargo();
+          updateCatcher();
+          updateHud();
+          startScreen.hidden = true;
+          $("runState").classList.add("is-running");
+          $("runStateText").textContent = "In play";
+          $("pauseButton").disabled = false;
+          $("pauseButton").textContent = "Pause";
+          $("feedback").textContent = "Go get it. Scroll only in the lower rail to shift your catch box.";
+          spawnCargo();
+          if (!animationFrame) animationFrame = requestAnimationFrame(frame);
         }
 
-        function setupDrag() {
-          clearArena();
-
-          const zone = document.createElement("div");
-          zone.className = "dropzone";
-          zone.innerHTML = "DELIVERY<br>ZONE";
-          const zoneSize = Math.max(68, 112 - (getStage() - 1) * 3);
-          zone.style.width = zoneSize + "px";
-          zone.style.height = zoneSize + "px";
-          zone.style.left = Math.max(14, arena.clientWidth - zoneSize - 22) + "px";
-          zone.style.top = Math.max(60, arena.clientHeight - zoneSize - 22) + "px";
-          arena.appendChild(zone);
-
-          const packageEl = document.createElement("button");
-          packageEl.className = "package";
-          packageEl.type = "button";
-          packageEl.textContent = "PKG";
-          packageEl.setAttribute(
-            "aria-label",
-            "Package. Drag it, or use arrow keys to move it and press Enter to deliver.",
-          );
-          packageEl.style.left = "35px";
-          packageEl.style.top = arena.clientHeight / 2 - 21 + "px";
-          arena.appendChild(packageEl);
-
-          function deliverPackage() {
-            const packageRect = packageEl.getBoundingClientRect();
-            const zoneRect = zone.getBoundingClientRect();
-            const centerX = packageRect.left + packageRect.width / 2;
-            const centerY = packageRect.top + packageRect.height / 2;
-            const delivered =
-              centerX > zoneRect.left &&
-              centerX < zoneRect.right &&
-              centerY > zoneRect.top &&
-              centerY < zoneRect.bottom;
-
-            if (delivered) {
-              const points = awardHit();
-              zone.classList.add("delivered");
-              beep(760);
-              $("feedback").textContent = `Delivery complete! +${points} points · ${streak} in a row`;
-              updateStats();
-              const nextZoneSize = Math.max(68, 112 - (getStage() - 1) * 3);
-              zone.style.width = nextZoneSize + "px";
-              zone.style.height = nextZoneSize + "px";
-              packageEl.style.left = "35px";
-              packageEl.style.top = arena.clientHeight / 2 - 21 + "px";
-              scheduleDeliveryZoneShift(zone);
-            } else {
-              registerMiss("Not quite. Move the package fully into the delivery zone.");
-            }
+        function setPaused() {
+          if (!running) return;
+          paused = !paused;
+          $("pauseButton").textContent = paused ? "Resume" : "Pause";
+          $("runStateText").textContent = paused ? "Paused" : "In play";
+          $("feedback").textContent = paused ? "Take a breather. Your shift is paused." : "Back on the clock. Keep the buffer safe.";
+          if (paused) {
+            activeDrag?.item.classList.remove("is-dragging");
+            activeDrag = null;
+            catcher.classList.remove("is-ready");
           }
-
-          packageEl.addEventListener("pointerdown", (event) => {
-            if (!running) return;
-            packageDragging = true;
-            packageEl.setPointerCapture(event.pointerId);
-
-            const rect = packageEl.getBoundingClientRect();
-            dragOffset.x = event.clientX - rect.left;
-            dragOffset.y = event.clientY - rect.top;
-          });
-
-          packageEl.addEventListener("pointermove", (event) => {
-            if (!packageDragging || !running) return;
-
-            const rect = arena.getBoundingClientRect();
-            const x = Math.max(
-              0,
-              Math.min(
-                rect.width - 42,
-                event.clientX - rect.left - dragOffset.x,
-              ),
-            );
-            const y = Math.max(
-              0,
-              Math.min(
-                rect.height - 42,
-                event.clientY - rect.top - dragOffset.y,
-              ),
-            );
-
-            packageEl.style.left = x + "px";
-            packageEl.style.top = y + "px";
-          });
-
-          packageEl.addEventListener("pointerup", () => {
-            if (!packageDragging || !running) return;
-            packageDragging = false;
-            deliverPackage();
-          });
-
-          packageEl.addEventListener("pointercancel", () => {
-            packageDragging = false;
-          });
-
-          packageEl.addEventListener("keydown", (event) => {
-            if (!running) return;
-            const rect = arena.getBoundingClientRect();
-            const currentX = Number.parseFloat(packageEl.style.left);
-            const currentY = Number.parseFloat(packageEl.style.top);
-            const step = event.shiftKey ? 48 : 24;
-            const maxX = rect.width - packageEl.offsetWidth;
-            const maxY = rect.height - packageEl.offsetHeight;
-
-            if (event.key === "ArrowLeft") {
-              packageEl.style.left = Math.max(0, currentX - step) + "px";
-            } else if (event.key === "ArrowRight") {
-              packageEl.style.left = Math.min(maxX, currentX + step) + "px";
-            } else if (event.key === "ArrowUp") {
-              packageEl.style.top = Math.max(0, currentY - step) + "px";
-            } else if (event.key === "ArrowDown") {
-              packageEl.style.top = Math.min(maxY, currentY + step) + "px";
-            } else {
-              return;
-            }
-
-            event.preventDefault();
-          });
-
-          packageEl.addEventListener("keyup", (event) => {
-            if (!running || (event.key !== "Enter" && event.key !== " ")) return;
-            event.preventDefault();
-            deliverPackage();
-          });
-
-          scheduleDeliveryZoneShift(zone);
+          lastFrame = 0;
         }
 
-        $("start").addEventListener("click", () => {
-          if (running) {
-            pause();
-          } else if (paused) {
-            resume();
+        function frame(timestamp) {
+          if (running && !paused) {
+            if (!lastFrame) lastFrame = timestamp;
+            const delta = Math.min(timestamp - lastFrame, 45);
+            lastFrame = timestamp;
+            elapsed += delta;
+            spawnElapsed += delta;
+            const level = getLevel();
+            const spawnInterval = Math.max(650, 1420 - (level - 1) * 90);
+            if (spawnElapsed >= spawnInterval) {
+              spawnElapsed = 0;
+              spawnCargo();
+            }
+            const arenaHeight = arena.clientHeight;
+            const speed = 58 + Math.min(level - 1, 12) * 5;
+            [...cargoLayer.children].forEach((item) => {
+              if (activeDrag?.item === item) return;
+              let y = Number(item.dataset.y) + speed * (delta / 1000);
+              let x = Number(item.dataset.baseX);
+              if (item.classList.contains("tracking") || mode === "tracking") {
+                x += Math.sin(timestamp * 0.0018 + Number(item.dataset.phase)) * Math.min(74, arena.clientWidth * 0.17);
+              }
+              x = clamp(x, 35, arena.clientWidth - 35);
+              item.dataset.x = String(x);
+              item.dataset.y = String(y);
+              item.style.left = `${x}px`;
+              item.style.top = `${y}px`;
+              if (y > arenaHeight - 57) penalizeCargo(item, "Missed parcel");
+            });
+            updateHud();
           } else {
-            start();
+            lastFrame = 0;
           }
+          animationFrame = requestAnimationFrame(frame);
+        }
+
+        function moveCatcher(amount) {
+          catcherX = clamp(catcherX + amount, 76, arena.clientWidth - 76);
+          catcher.style.left = `${catcherX}px`;
+        }
+
+        arena.addEventListener("pointermove", dragMove);
+        arena.addEventListener("pointerup", dragEnd);
+        arena.addEventListener("pointercancel", (event) => {
+          if (!activeDrag || event.pointerId !== activeDrag.pointerId) return;
+          activeDrag.item.classList.remove("is-dragging");
+          activeDrag.item.dataset.x = String(activeDrag.originalX);
+          activeDrag.item.dataset.y = String(activeDrag.originalY);
+          activeDrag.item.style.left = `${activeDrag.originalX}px`;
+          activeDrag.item.style.top = `${activeDrag.originalY}px`;
+          activeDrag = null;
+          catcher.classList.remove("is-ready");
+        });
+        arena.addEventListener("wheel", (event) => {
+          const rect = arena.getBoundingClientRect();
+          if (event.clientY < rect.bottom - 118 || !running || paused) return;
+          event.preventDefault();
+          const delta = event.deltaY || event.deltaX;
+          if (delta) moveCatcher(clamp(delta * 0.8, -110, 110));
+        }, { passive: false });
+        arena.addEventListener("keydown", (event) => {
+          if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+          event.preventDefault();
+          moveCatcher(event.key === "ArrowLeft" ? -32 : 32);
+        });
+        window.addEventListener("resize", updateCatcher);
+        modes.forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
+        $("startButton").addEventListener("click", startRun);
+        $("pauseButton").addEventListener("click", setPaused);
+        $("resetButton").addEventListener("click", () => {
+          running = false;
+          paused = false;
+          clearCargo();
+          score = 0;
+          buffer = maxBuffer;
+          delivered = 0;
+          misses = 0;
+          streak = 0;
+          elapsed = 0;
+          lastFrame = 0;
+          startScreen.hidden = false;
+          $("overlayTitle").textContent = "Ready to run a shift?";
+          $("overlayCopy").textContent = "Grab the parcels and drop them in your catch box. Every miss spends part of your contract buffer.";
+          $("startButton").innerHTML = 'Start the run <span aria-hidden="true">→</span>';
+          $("runState").classList.remove("is-running");
+          $("runStateText").textContent = "Ready";
+          $("pauseButton").disabled = true;
+          $("pauseButton").textContent = "Pause";
+          $("feedback").textContent = "Scroll in the lower rail to line up your box, then grab a parcel.";
+          updateHud();
         });
 
-        $("sound").setAttribute("aria-pressed", "false");
-        $("sound").addEventListener("click", () => {
-          sound = !sound;
-          $("sound").textContent = "Sound: " + (sound ? "on" : "off");
-          $("sound").setAttribute("aria-pressed", String(sound));
-          if (sound) beep();
-        });
-
-        document.querySelectorAll(".mode-btn").forEach((button) => {
-          button.addEventListener("click", () => setMode(button.dataset.mode));
-        });
-
-        arena.addEventListener("click", (event) => {
-          if (!running || mode === "drag") return;
-
-          if (
-            event.target === arena ||
-            event.target.classList.contains("hint")
-          ) {
-            registerMiss("Missed! Slow down and aim for the center.");
-          }
-        });
-
-        setMode("warm");
-        updateStats();
+        updateCatcher();
+        updateHud();
       })();
     </script>
   </body>
