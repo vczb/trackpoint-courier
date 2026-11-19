@@ -157,7 +157,7 @@ const arena = $("arena"), overlay = $("overlay"), card = $("card"), box = $("box
 let running=false, hits=0, streak=0, score=0, sound=false;
 let boxX=0, boxWidth=110, boxHeight=58, boxTop=0;
 let objects=[]; let spawnTimer=0; let rafId=null; let lastTime=null;
-let boxDragging=false, grabbed=null, grabOffset={x:0,y:0};
+let grabbed=null, grabOffset={x:0,y:0};
 
 function stageOf(){ return Math.floor((Math.sqrt(hits+1)-1)/2)+1; }
 function stageStartHits(s){ return 4*(s-1)*s; }
@@ -241,9 +241,9 @@ function registerMiss(){
   updateHud();
 }
 
-function boxSizeFor(){ return Math.max(68, 110-(stageOf()-1)*2.5); }
-function spawnInterval(){ return Math.max(0.32, 1.15-(stageOf()-1)*0.065); }
-function fallSpeed(){ return Math.min(340, 110+(stageOf()-1)*16); }
+function boxSizeFor(){ return Math.max(80, 130-(stageOf()-1)*1.4); }
+function spawnInterval(){ return Math.max(0.55, 2.1-(stageOf()-1)*0.045); }
+function fallSpeed(){ return Math.min(260, 75+(stageOf()-1)*9); }
 
 function layoutBox(){
   const r=arena.getBoundingClientRect();
@@ -350,7 +350,7 @@ function tick(ts){
 }
 
 function start(){
-  running=true; lastTime=null; spawnTimer=0.3;
+  running=true; lastTime=null; spawnTimer=0.6;
   overlay.style.display="none";
   $("pause").hidden=false; $("pause").textContent="Pause";
   $("feedback").textContent="Here they come — steer or grab.";
@@ -377,27 +377,7 @@ function onWheel(e){
 }
 arena.addEventListener("wheel", onWheel, {passive:false});
 
-window.addEventListener("keydown", e=>{
-  if(!running) return;
-  const step=26;
-  if(e.key==="ArrowLeft"){ e.preventDefault(); moveBox(-step); }
-  else if(e.key==="ArrowRight"){ e.preventDefault(); moveBox(step); }
-});
-
-box.addEventListener("pointerdown", e=>{ boxDragging=true; box.setPointerCapture(e.pointerId); });
-arena.addEventListener("pointermove", e=>{
-  if(!boxDragging||!running||grabbed) return;
-  const r=arena.getBoundingClientRect();
-  boxX=clamp(e.clientX-r.left, boxWidth/2, r.width-boxWidth/2);
-  box.style.left=boxX+"px";
-});
-window.addEventListener("pointerup", ()=>{ boxDragging=false; });
-arena.addEventListener("pointerdown", e=>{
-  if(!running || e.target===box || e.target.closest(".obj")) return;
-  const r=arena.getBoundingClientRect();
-  boxX=clamp(e.clientX-r.left, boxWidth/2, r.width-boxWidth/2);
-  box.style.left=boxX+"px";
-});
+// Box moves only via wheel/scroll (onWheel above) — no arrow keys, no click/drag-to-jump.
 
 window.addEventListener("resize", ()=>{ layoutBox(); });
 
